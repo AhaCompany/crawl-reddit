@@ -16,7 +16,8 @@ export const crawlSubredditPosts = async (
   subreddit: string,
   limit: number = 25,
   sortBy: 'hot' | 'new' | 'top' | 'rising' = 'hot',
-  timeRange: 'hour' | 'day' | 'week' | 'month' | 'year' | 'all' = 'all'
+  timeRange: 'hour' | 'day' | 'week' | 'month' | 'year' | 'all' = 'all',
+  verbose: boolean = true // Thêm tham số verbose để kiểm soát việc lấy chi tiết
 ): Promise<void> => {
   try {
     console.log(`Crawling ${limit} ${sortBy} posts from r/${subreddit}...`);
@@ -25,7 +26,7 @@ export const crawlSubredditPosts = async (
     const subredditObj = redditClient.getSubreddit(subreddit);
     
     // Get posts based on sort type - snoowrap API expects 'limit' parameter
-    let posts;
+    let posts: any[] = [];
     const options = { limit };
     const topOptions = { time: timeRange, limit };
     
@@ -46,24 +47,98 @@ export const crawlSubredditPosts = async (
         posts = await subredditObj.getHot(options);
     }
     
-    // Map to our post model
-    const formattedPosts: RedditPost[] = posts.map((post: any) => ({
-      id: post.id,
-      title: post.title,
-      author: post.author.name,
-      selftext: post.selftext,
-      url: post.url,
-      permalink: `https://www.reddit.com${post.permalink}`,
-      created_utc: post.created_utc,
-      subreddit: post.subreddit.display_name,
-      score: post.score,
-      num_comments: post.num_comments,
-      upvote_ratio: post.upvote_ratio,
-      is_original_content: post.is_original_content,
-      is_self: post.is_self,
-      link_flair_text: post.link_flair_text,
-      media: post.media
-    }));
+    // verbose = true sẽ lấy thông tin chi tiết hơn về mỗi bài viết
+    // nhưng sẽ tốn nhiều API calls hơn
+
+    // Nếu bài viết cần thêm thông tin chi tiết, fetch riêng từng bài
+    if (verbose) {
+      console.log(`Fetching detailed information for ${posts.length} posts...`);
+      // Sử dụng Promise.all để tăng hiệu suất
+      // Lấy ID của các bài viết trước để tránh lỗi tham chiếu vòng tròn
+      const postIds = posts.map(post => post.id);
+      
+      const detailedPosts = await Promise.all(
+        postIds.map(async (postId: string) => {
+          try {
+            // Lấy submission và fetch riêng rẽ để tránh lỗi TS1062
+            const submission = redditClient.getSubmission(postId);
+            // Sử dụng casting để xử lý kiểu tham chiếu
+            return await (submission as any).fetch();
+          } catch (error) {
+            console.error(`Error fetching details for post ${postId}:`, error);
+            // Tìm lại post gốc từ mảng ban đầu nếu có lỗi
+            return posts.find((p: any) => p.id === postId) || { id: postId };
+          }
+        })
+      );
+      posts = detailedPosts;
+    }
+    
+    // Map dữ liệu chi tiết sang mô hình của chúng ta
+    const formattedPosts: RedditPost[] = posts.map((post: any) => {
+      // Xử lý an toàn các thuộc tính có thể không tồn tại
+      const authorName = post.author ? (typeof post.author === 'string' ? post.author : post.author.name || '[deleted]') : '[deleted]';
+      
+      return {
+        // Thông tin cơ bản
+        id: post.id,
+        title: post.title,
+        author: authorName,
+        author_fullname: post.author_fullname,
+        
+        // Nội dung bài viết - đây là nội dung thân bài
+        selftext: post.selftext || '',
+        selftext_html: post.selftext_html || '',
+        body: post.body || post.selftext || '',  // Dùng làm alias
+        
+        // URLs
+        url: post.url,
+        permalink: `https://www.reddit.com${post.permalink}`,
+        thumbnail: post.thumbnail !== 'self' && post.thumbnail !== 'default' ? post.thumbnail : undefined,
+        
+        // Thời gian
+        created_utc: post.created_utc,
+        
+        // Thông tin subreddit
+        subreddit: post.subreddit ? (typeof post.subreddit === 'string' ? post.subreddit : post.subreddit.display_name) : '',
+        subreddit_id: post.subreddit_id,
+        subreddit_type: post.subreddit_type,
+        
+        // Số liệu thống kê
+        score: post.score || 0,
+        num_comments: post.num_comments || 0,
+        upvote_ratio: post.upvote_ratio || 0,
+        ups: post.ups,
+        downs: post.downs,
+        
+        // Flags
+        is_original_content: !!post.is_original_content,
+        is_self: !!post.is_self,
+        is_video: !!post.is_video,
+        is_gallery: !!post.is_gallery,
+        over_18: !!post.over_18,
+        spoiler: !!post.spoiler,
+        stickied: !!post.stickied,
+        archived: !!post.archived,
+        locked: !!post.locked,
+        
+        // Flair và awards
+        link_flair_text: post.link_flair_text,
+        link_flair_css_class: post.link_flair_css_class,
+        gilded: post.gilded,
+        total_awards_received: post.total_awards_received,
+        
+        // Media và galleries
+        media: post.media,
+        media_metadata: post.media_metadata,
+        gallery_data: post.gallery_data,
+        
+        // Extras
+        domain: post.domain,
+        suggested_sort: post.suggested_sort,
+        crosspost_parent_list: post.crosspost_parent_list
+      };
+    });
     
     // Save to JSON
     const outputDir = path.join(config.app.outputDir, subreddit);

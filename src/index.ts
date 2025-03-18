@@ -20,6 +20,8 @@ async function main() {
   const limit = Number(process.argv[3]) || 25;
   const sortBy = (process.argv[4] || 'hot') as 'hot' | 'new' | 'top' | 'rising';
   const timeRange = (process.argv[5] || 'week') as 'hour' | 'day' | 'week' | 'month' | 'year' | 'all';
+  // Tham số verbose kiểm soát việc lấy chi tiết (true = lấy chi tiết, false = chỉ lấy thông tin cơ bản)
+  const verbose = process.argv[6] !== 'false'; // mặc định là true trừ khi người dùng nhập 'false'
   
   try {
     if (!config.reddit.clientId || !config.reddit.clientSecret) {
@@ -27,10 +29,10 @@ async function main() {
       return;
     }
     
-    console.log(`Starting Reddit crawler for r/${subreddit} (${sortBy})`);
+    console.log(`Starting Reddit crawler for r/${subreddit} (${sortBy}) with verbose mode: ${verbose ? 'ON' : 'OFF'}`);
     
     // Crawl posts from subreddit
-    await crawlSubredditPosts(subreddit, limit, sortBy, timeRange);
+    await crawlSubredditPosts(subreddit, limit, sortBy, timeRange, verbose);
     
     // Example of crawling comments from a post
     // To use this, uncomment and provide a post ID

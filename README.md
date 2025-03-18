@@ -51,7 +51,7 @@ REDDIT_USER_AGENT=nodejs:reddit-crawler:v1.0 (by /u/your_username)
 #### Crawl bài viết từ subreddit
 
 ```bash
-npm start -- programming 25 hot week
+npm start -- programming 25 hot week true
 ```
 
 Các tham số:
@@ -59,6 +59,17 @@ Các tham số:
 2. Số bài viết cần crawl (mặc định: 25)
 3. Cách sắp xếp: hot, new, top, rising (mặc định: hot)
 4. Khoảng thời gian (cho top): hour, day, week, month, year, all (mặc định: week)
+5. Verbose mode (true/false): nếu là true (mặc định), sẽ lấy thông tin chi tiết cho mỗi bài viết bao gồm nội dung đầy đủ của bài viết (selftext, selftext_html). Nếu là false, chỉ lấy thông tin cơ bản (nhanh hơn, ít API calls hơn)
+
+Ví dụ lấy thông tin tóm tắt (nhanh hơn):
+```bash
+npm start -- programming 50 hot day false
+```
+
+Ví dụ lấy thông tin chi tiết (đầy đủ nội dung bài viết):
+```bash
+npm start -- programming 25 top week true
+```
 
 #### Crawl comments từ một bài viết
 
