@@ -10,7 +10,9 @@
     "lint": "eslint 'src/**/*.ts'",
     "test": "echo \"Error: no test specified\" && exit 1",
     "continuous-crawl": "npm run build && node dist/continuousCrawl.js",
-    "crawl-comments": "npm run build && node dist/crawl-comments.js"
+    "crawl-comments": "npm run build && node dist/crawl-comments.js",
+    "dynamic-crawl": "npm run build && node dist/dynamicCrawl.js",
+    "config": "npm run build && node dist/configTool.js"
   },
   "keywords": [
     "reddit",
