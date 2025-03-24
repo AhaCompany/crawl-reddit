@@ -2,8 +2,9 @@ import { redditClient } from './redditClient';
 import { config } from '../config/config';
 import { RedditPost } from '../models/Post';
 import { RedditComment } from '../models/Comment';
-import { saveToJson } from '../utils/fileHelper';
 import path from 'path';
+import { saveToJson } from '../utils/fileHelper';
+import { storePosts, storeComments } from '../storage/storageFacade';
 
 /**
  * Crawl posts from a subreddit and save them to JSON
@@ -140,10 +141,10 @@ export const crawlSubredditPosts = async (
       };
     });
     
-    // Save to JSON
+    // Save to configured storage systems
     const outputDir = path.join(config.app.outputDir, subreddit);
     const filePath = path.join(outputDir, `${sortBy}_${timeRange}_${new Date().toISOString().split('T')[0]}.json`);
-    saveToJson(filePath, formattedPosts);
+    await storePosts(subreddit, formattedPosts, filePath);
     
     console.log(`Crawled ${formattedPosts.length} posts from r/${subreddit}`);
   } catch (error) {
@@ -201,10 +202,10 @@ export const crawlPostComments = async (
     // Format all top-level comments
     const formattedComments = comments.map((comment: any) => formatComment(comment));
     
-    // Save to JSON
+    // Save to configured storage systems
     const outputDir = path.join(config.app.outputDir, 'comments');
     const filePath = path.join(outputDir, `${postId}_${new Date().toISOString().split('T')[0]}.json`);
-    saveToJson(filePath, formattedComments);
+    await storeComments(postId, formattedComments, filePath);
     
     console.log(`Crawled ${formattedComments.length} comments for post ${postId}`);
   } catch (error) {
