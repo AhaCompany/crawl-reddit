@@ -1,0 +1,67 @@
+[
+  {
+    "id": "mjlma7t",
+    "author": "Digital_Scarcity",
+    "body": "It's the amount that is personal to you, relative to monthly income and net worth. For some, they might start sweating leaving 0.01btc online, for others it's 0.5 etc. You need to figure out your own risk tolerance and balance that with minimising UTXO count.",
+    "permalink": "https://www.reddit.com/r/Bitcoin/comments/1jjaa98/cold_wallet_limit_recommendation/mjlma7t/",
+    "created_utc": 1742874157,
+    "score": 1,
+    "subreddit": "Bitcoin",
+    "is_submitter": false,
+    "parent_id": "t3_1jjaa98",
+    "depth": 0,
+    "replies": []
+  },
+  {
+    "id": "mjlpprb",
+    "author": "Rare-Platform9195",
+    "body": "Thanks for answer, I dont know what UTXO means will research it.\n\n  \nBut let's say if btc has been leaked/stolen from hot wallet, then it's not broker's responsibility ?",
+    "permalink": "https://www.reddit.com/r/Bitcoin/comments/1jjaa98/cold_wallet_limit_recommendation/mjlpprb/",
+    "created_utc": 1742875709,
+    "score": 1,
+    "subreddit": "Bitcoin",
+    "is_submitter": true,
+    "parent_id": "t1_mjlma7t",
+    "depth": 1,
+    "replies": []
+  },
+  {
+    "id": "mjlr0hm",
+    "author": "Digital_Scarcity",
+    "body": "You do that! UTXO is created every time you deposit into cold storage. The sum of all UTXOs is your total wallet balance. Each UTXO incurrs a tx fee. This is why ppl minimise send count, and periodically consolidate when timechain congestion is low and tx fees are low.\n\nRe. Broker, with BTC it's legally an IOU and depending on the capital structure of coinbase you're entitled to a % of liquidation in case of chapter 11, but not guaranteed all your BTC back. Not your keys, not your cheese.",
+    "permalink": "https://www.reddit.com/r/Bitcoin/comments/1jjaa98/cold_wallet_limit_recommendation/mjlr0hm/",
+    "created_utc": 1742876319,
+    "score": 1,
+    "subreddit": "Bitcoin",
+    "is_submitter": false,
+    "parent_id": "t1_mjlpprb",
+    "depth": 2,
+    "replies": []
+  },
+  {
+    "id": "mjlrjx8",
+    "author": "Rare-Platform9195",
+    "body": "Oh great gems of info you are distributing! \n\nso afaik this tx fee goes to miners but not brokers ? also is there website or something when I can see timechain congestion is low that i can send in lower fee ?",
+    "permalink": "https://www.reddit.com/r/Bitcoin/comments/1jjaa98/cold_wallet_limit_recommendation/mjlrjx8/",
+    "created_utc": 1742876580,
+    "score": 1,
+    "subreddit": "Bitcoin",
+    "is_submitter": true,
+    "parent_id": "t1_mjlr0hm",
+    "depth": 3,
+    "replies": []
+  },
+  {
+    "id": "mjlqj3k",
+    "author": "birjy",
+    "body": "im using strike app. When i get like 70 buck worth of btc i can withdraw to wallet for free.",
+    "permalink": "https://www.reddit.com/r/Bitcoin/comments/1jjaa98/cold_wallet_limit_recommendation/mjlqj3k/",
+    "created_utc": 1742876091,
+    "score": 1,
+    "subreddit": "Bitcoin",
+    "is_submitter": false,
+    "parent_id": "t3_1jjaa98",
+    "depth": 0,
+    "replies": []
+  }
+]

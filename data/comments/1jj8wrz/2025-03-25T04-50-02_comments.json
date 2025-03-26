@@ -1,0 +1,67 @@
+[
+  {
+    "id": "mjla0gi",
+    "author": "No-Word-8836",
+    "body": "I think you'd need to be the government, a blockchain analysis firm, or the exchange to know for sure.\n\nIf you gave the platforms your info at any point, I would just assume it's KYC.",
+    "permalink": "https://www.reddit.com/r/Bitcoin/comments/1jj8wrz/how_to_know_if_a_certain_utxo_is_kyc_or_non_kyc/mjla0gi/",
+    "created_utc": 1742869278,
+    "score": 3,
+    "subreddit": "Bitcoin",
+    "is_submitter": false,
+    "parent_id": "t3_1jj8wrz",
+    "depth": 0,
+    "replies": []
+  },
+  {
+    "id": "mjlin2k",
+    "author": "dadlif3",
+    "body": "If you gave them your ID -> KYC",
+    "permalink": "https://www.reddit.com/r/Bitcoin/comments/1jj8wrz/how_to_know_if_a_certain_utxo_is_kyc_or_non_kyc/mjlin2k/",
+    "created_utc": 1742872607,
+    "score": 1,
+    "subreddit": "Bitcoin",
+    "is_submitter": false,
+    "parent_id": "t3_1jj8wrz",
+    "depth": 0,
+    "replies": []
+  },
+  {
+    "id": "mjlkmiu",
+    "author": "SmoothGoing",
+    "body": "Assume they know and pay your taxes.",
+    "permalink": "https://www.reddit.com/r/Bitcoin/comments/1jj8wrz/how_to_know_if_a_certain_utxo_is_kyc_or_non_kyc/mjlkmiu/",
+    "created_utc": 1742873444,
+    "score": 1,
+    "subreddit": "Bitcoin",
+    "is_submitter": false,
+    "parent_id": "t3_1jj8wrz",
+    "depth": 0,
+    "replies": []
+  },
+  {
+    "id": "mjlm2qt",
+    "author": "traviszzz",
+    "body": "I don't plan to pay taxes since I will never sell my btc",
+    "permalink": "https://www.reddit.com/r/Bitcoin/comments/1jj8wrz/how_to_know_if_a_certain_utxo_is_kyc_or_non_kyc/mjlm2qt/",
+    "created_utc": 1742874067,
+    "score": 1,
+    "subreddit": "Bitcoin",
+    "is_submitter": true,
+    "parent_id": "t1_mjlkmiu",
+    "depth": 1,
+    "replies": []
+  },
+  {
+    "id": "mjlmb7m",
+    "author": "SmoothGoing",
+    "body": "If your intention is to just obscure the source coinjoin everything and go from a \"fresh start.\"",
+    "permalink": "https://www.reddit.com/r/Bitcoin/comments/1jj8wrz/how_to_know_if_a_certain_utxo_is_kyc_or_non_kyc/mjlmb7m/",
+    "created_utc": 1742874169,
+    "score": 1,
+    "subreddit": "Bitcoin",
+    "is_submitter": false,
+    "parent_id": "t1_mjlm2qt",
+    "depth": 2,
+    "replies": []
+  }
+]

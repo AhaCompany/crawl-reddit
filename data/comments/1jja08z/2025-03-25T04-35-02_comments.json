@@ -1,0 +1,54 @@
+[
+  {
+    "id": "mjll9ik",
+    "author": "rBitcoinMod",
+    "body": "Similar content has already been submitted several times. Please check the front page of r/Bitcoin and r/Bitcoin/new for previous submissions to help keep repetition to a minimum. You can also try using the search bar. Thank you.\n\n^^I ^^am ^^a ^^bot ^^and ^^cannot ^^respond. ^^Please ^^contact ^^r/Bitcoin ^^moderators [^^directly ^^via ^^mod ^^mail](https://www.reddit.com/message/compose?to=%2Fr%2FBitcoin) ^^if ^^you ^^have ^^questions.",
+    "permalink": "https://www.reddit.com/r/Bitcoin/comments/1jja08z/how_to_do_a_unified_hardfork/mjll9ik/",
+    "created_utc": 1742873717,
+    "score": 1,
+    "subreddit": "Bitcoin",
+    "is_submitter": false,
+    "parent_id": "t3_1jja08z",
+    "depth": 0,
+    "replies": []
+  },
+  {
+    "id": "mjljl5j",
+    "author": "galimi",
+    "body": "I don't know much about this, but I thought the vulnerability regarding quantum was with ECDSA and not SHA256.",
+    "permalink": "https://www.reddit.com/r/Bitcoin/comments/1jja08z/how_to_do_a_unified_hardfork/mjljl5j/",
+    "created_utc": 1742873005,
+    "score": 1,
+    "subreddit": "Bitcoin",
+    "is_submitter": false,
+    "parent_id": "t3_1jja08z",
+    "depth": 0,
+    "replies": []
+  },
+  {
+    "id": "mjll3n8",
+    "author": "SmoothGoing",
+    "body": "SHA256 is not encryption and QC threat is not primarily with that. Search the sub for quantum and read up on it before you repost a question armed with some basic knowledge.",
+    "permalink": "https://www.reddit.com/r/Bitcoin/comments/1jja08z/how_to_do_a_unified_hardfork/mjll3n8/",
+    "created_utc": 1742873647,
+    "score": 1,
+    "subreddit": "Bitcoin",
+    "is_submitter": false,
+    "parent_id": "t3_1jja08z",
+    "depth": 0,
+    "replies": []
+  },
+  {
+    "id": "mjlm19l",
+    "author": "cpt_charisma",
+    "body": "It won't be a problem if it's both non-controversial and well planned.  Ideally you would want to put the tech in the node software years in advance to make sure most people are upgraded before it takes effect.  As long as it isn't contentious enough to keep people from upgrading, it's fine.",
+    "permalink": "https://www.reddit.com/r/Bitcoin/comments/1jja08z/how_to_do_a_unified_hardfork/mjlm19l/",
+    "created_utc": 1742874049,
+    "score": 1,
+    "subreddit": "Bitcoin",
+    "is_submitter": false,
+    "parent_id": "t3_1jja08z",
+    "depth": 0,
+    "replies": []
+  }
+]

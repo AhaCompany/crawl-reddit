@@ -14,7 +14,9 @@
     "dynamic-crawl": "npm run build && node dist/dynamicCrawl.js",
     "config": "npm run build && node dist/configTool.js",
     "comment-track": "npm run build && node dist/commentTrackingTool.js",
-    "incremental-comments": "npm run build && node dist/incrementalCommentCrawl.js"
+    "incremental-comments": "npm run build && node dist/incrementalCommentCrawl.js",
+    "auto-track": "npm run build && node dist/autoTrackPosts.js",
+    "import-all-posts": "npm run build && node dist/importAllPosts.js"
   },
   "keywords": [
     "reddit",

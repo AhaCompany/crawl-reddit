@@ -136,6 +136,21 @@ export class CommentTracker {
       console.error(`Error disabling tracking for post ${postId}:`, error);
     }
   }
+  
+  /**
+   * Lấy số lượng bài viết đang được theo dõi
+   */
+  public async getActiveTrackingCount(): Promise<number> {
+    try {
+      const result = await this.pool.query(
+        `SELECT COUNT(*) as count FROM post_comment_tracking WHERE is_active = TRUE`
+      );
+      return parseInt(result.rows[0].count || '0');
+    } catch (error) {
+      console.error('Error getting active tracking count:', error);
+      return 0;
+    }
+  }
 
   /**
    * Lấy danh sách bài viết cần quét comments tiếp theo
@@ -388,8 +403,9 @@ export class CommentTracker {
   /**
    * Kiểm tra và cập nhật trạng thái theo dõi
    * Vô hiệu hóa bài viết đã hết thời gian theo dõi
+   * @returns Số lượng bài viết đã vô hiệu hóa
    */
-  public async cleanupTracking(): Promise<void> {
+  public async cleanupTracking(): Promise<number> {
     try {
       // Vô hiệu hóa bài viết đã hết thời gian theo dõi
       const result = await this.pool.query(
@@ -400,25 +416,30 @@ export class CommentTracker {
         AND check_until < NOW()`
       );
       
-      if (result.rowCount && result.rowCount > 0) {
-        console.log(`Disabled tracking for ${result.rowCount} posts that expired`);
+      const disabledCount = result.rowCount || 0;
+      if (disabledCount > 0) {
+        console.log(`Disabled tracking for ${disabledCount} posts that expired`);
       }
+      
+      return disabledCount;
     } catch (error) {
       console.error('Error cleaning up post tracking:', error);
+      return 0;
     }
   }
 
   /**
    * Thêm các bài viết mới từ DataEntity vào tracking
+   * @returns Số lượng bài viết đã thêm vào tracking
    */
-  public async addNewPostsFromDataEntity(limit: number = 20, trackingDays: number = 3): Promise<void> {
+  public async addNewPostsFromDataEntity(limit: number = 20, trackingDays: number = 3): Promise<number> {
     try {
       // Lấy các bài viết mới từ bảng DataEntity mà chưa có trong tracking
       const result = await this.pool.query(
         `SELECT 
           SUBSTRING(uri FROM 'comments/([^/]+)/') AS post_id,
           label AS subreddit,
-          to_timestamp(datetime, 'YYYY-MM-DD HH24:MI:SS') AS created_at
+          datetime AS created_at
         FROM 
           DataEntity
         WHERE 
@@ -436,7 +457,7 @@ export class CommentTracker {
       
       if (result.rows.length === 0) {
         console.log('No new posts to add for comment tracking');
-        return;
+        return 0;
       }
       
       console.log(`Found ${result.rows.length} new posts to add for comment tracking`);
@@ -452,8 +473,11 @@ export class CommentTracker {
           trackingDays
         );
       }
+      
+      return result.rows.length;
     } catch (error) {
       console.error('Error adding new posts from DataEntity:', error);
+      return 0;
     }
   }
 }
