@@ -1,7 +1,24 @@
 /**
  * File test đơn giản để kiểm tra account rotation khi crawl Reddit
  */
-import { getRedditClient, getAccountStats, closeRedditClient } from './utils/rotatingRedditClient';
+import { getAccountStats, closeRedditClient, executeRedditRequest } from './utils/rotatingRedditClient';
+
+// Interface định nghĩa thông tin subreddit đơn giản
+interface SubredditInfo {
+  display_name: string;
+  title: string;
+  subscribers: number;
+  public_description: string;
+}
+
+// Interface định nghĩa thông tin bài post đơn giản
+interface PostInfo {
+  title: string;
+  author: string;
+  created_utc: number;
+  score: number;
+  url: string;
+}
 
 async function testAccountCrawl() {
   try {
@@ -12,29 +29,65 @@ async function testAccountCrawl() {
     const accountStatsBefore = await getAccountStats();
     console.log(JSON.stringify(accountStatsBefore, null, 2));
     
-    // Lấy client Reddit (sẽ tự động lấy tài khoản từ database)
-    console.log('\nĐang lấy Reddit client...');
-    const client = await getRedditClient();
-    
     // Test lấy thông tin subreddit
     console.log('\nTest 1: Lấy thông tin về subreddit');
     const subredditName = 'programming';
     console.log(`Đang lấy thông tin của r/${subredditName}...`);
-    const subreddit = await client.getSubreddit(subredditName).fetch();
+    
+    // Sử dụng executeRedditRequest để tránh vấn đề circular reference
+    const subredditInfo = await executeRedditRequest<SubredditInfo>((client) => {
+      // Truy cập subreddit
+      const sub = client.getSubreddit(subredditName);
+      
+      // Sử dụng dạng "raw" promise để tránh circular reference
+      return new Promise<SubredditInfo>((resolve) => {
+        sub.fetch().then(info => {
+          // Chuyển đổi thành object đơn giản để tránh circular reference
+          resolve({
+            display_name: info.display_name,
+            title: info.title,
+            subscribers: info.subscribers,
+            public_description: info.public_description || ''
+          });
+        });
+      });
+    });
+    
     console.log(`Thông tin cơ bản của r/${subredditName}:`);
-    console.log(`- Tên hiển thị: ${subreddit.display_name}`);
-    console.log(`- Title: ${subreddit.title}`);
-    console.log(`- Subscribers: ${subreddit.subscribers}`);
-    console.log(`- Description: ${subreddit.public_description.substring(0, 100)}...`);
+    console.log(`- Tên hiển thị: ${subredditInfo.display_name}`);
+    console.log(`- Title: ${subredditInfo.title}`);
+    console.log(`- Subscribers: ${subredditInfo.subscribers}`);
+    console.log(`- Description: ${subredditInfo.public_description.substring(0, 100)}...`);
     
     // Test lấy các bài viết mới nhất
     console.log('\nTest 2: Lấy 5 bài viết mới nhất');
-    const newPosts = await client.getSubreddit(subredditName).getNew({limit: 5});
+    
+    // Sử dụng executeRedditRequest cho việc lấy bài viết
+    const newPosts = await executeRedditRequest<PostInfo[]>((client) => {
+      // Truy cập subreddit
+      const sub = client.getSubreddit(subredditName);
+      
+      // Sử dụng dạng "raw" promise để tránh circular reference
+      return new Promise<PostInfo[]>((resolve) => {
+        sub.getNew({limit: 5}).then(posts => {
+          // Chuyển đổi thành mảng các object đơn giản
+          const simplePosts = posts.map(post => ({
+            title: post.title,
+            author: post.author ? post.author.name : '[deleted]',
+            created_utc: post.created_utc,
+            score: post.score,
+            url: post.url
+          }));
+          resolve(simplePosts);
+        });
+      });
+    });
+    
     console.log(`Lấy được ${newPosts.length} bài viết mới từ r/${subredditName}:`);
     
-    newPosts.forEach((post, index) => {
+    newPosts.forEach((post: PostInfo, index: number) => {
       console.log(`\n[${index + 1}] ${post.title}`);
-      console.log(`- Author: ${post.author.name}`);
+      console.log(`- Author: ${post.author}`);
       console.log(`- Created: ${new Date(post.created_utc * 1000).toISOString()}`);
       console.log(`- Score: ${post.score}`);
       console.log(`- URL: ${post.url}`);
