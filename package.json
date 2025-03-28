@@ -19,7 +19,8 @@
     "import-all-posts": "npm run build && node dist/importAllPosts.js",
     "proxy": "npm run build && node dist/proxyTool.js",
     "accounts": "npm run build && node dist/accountsManager.js",
-    "migrate": "npm run build && node dist/migrationTool.js"
+    "migrate": "npm run build && node dist/migrationTool.js",
+    "test-account": "npm run build && node dist/testAccountCrawl.js"
   },
   "keywords": [
     "reddit",
