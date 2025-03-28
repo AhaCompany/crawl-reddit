@@ -3,12 +3,15 @@ import { config } from './config/config';
 import path from 'path';
 import fs from 'fs';
 import { ensureDirectoryExists } from './utils/fileHelper';
-import { setupHttpAgents } from './utils/proxy';
+import { setupHttpAgents } from './utils/rotatingRedditClient';
 import { closePool } from './utils/postgresHelper';
 import { initializeStorageSystems, closeStorageSystems } from './storage/storageFacade';
 
 // Create data directory if it doesn't exist
 ensureDirectoryExists(config.app.outputDir);
+
+// Configure HTTP agents to avoid connection issues
+(async () => { await setupHttpAgents(); })().catch(err => console.error('Error setting up HTTP agents:', err));
 
 /**
  * Main function to run the Reddit crawler

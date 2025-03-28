@@ -1,0 +1,23 @@
+[
+  {
+    "username": "username1",
+    "password": "password1",
+    "clientId": "clientId1",
+    "clientSecret": "clientSecret1",
+    "userAgent": "MyBot/1.0 (by /u/username1)"
+  },
+  {
+    "username": "username2",
+    "password": "password2",
+    "clientId": "clientId2",
+    "clientSecret": "clientSecret2",
+    "userAgent": "MyBot/1.0 (by /u/username2)"
+  },
+  {
+    "username": "username3",
+    "password": "password3",
+    "clientId": "clientId3",
+    "clientSecret": "clientSecret3",
+    "userAgent": "MyBot/1.0 (by /u/username3)"
+  }
+]

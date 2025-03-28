@@ -1,5 +1,5 @@
 import { config } from './config/config';
-import { setupHttpAgents } from './utils/proxy';
+import { setupDefaultHttpAgents } from './utils/proxy';
 import { ensureDirectoryExists } from './utils/fileHelper';
 import { crawlScheduler } from './utils/scheduler';
 import { closePool } from './utils/postgresHelper';
@@ -44,7 +44,7 @@ function parseIntervalToCron(interval: string): string {
 async function startContinuousCrawling() {
   try {
     // Configure HTTP agents
-    setupHttpAgents();
+    setupDefaultHttpAgents();
     
     // Initialize all storage systems based on configuration
     await initializeStorageSystems();

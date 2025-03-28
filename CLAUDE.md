@@ -1,24 +1,46 @@
-# CLAUDE.md - Code Assistant Guide
+# Claude's Notes for Reddit Crawler Project
 
-## Project Commands
-- Build: `npm run build`
-- Lint: `npm run lint`
-- Test: `npm test`
-- Run single test: `npm test -- -t "test name"` 
-- Start dev server: `npm run dev`
+## Build Commands
+- Build the project: `npm run build`
+- Run the application: `npm start`
+- Start development mode: `npm run dev`
+- Run continuous crawling: `npm run continuous-crawl`
+- Run dynamic crawling: `npm run dynamic-crawl`
+- Manage config: `npm run config`
+- Apply database migrations: `npm run migrate`
+- Manage proxy settings: `npm run proxy`
+- Manage Reddit accounts: `npm run accounts`
 
-## Code Style Guidelines
-- **Formatting**: Use Prettier with default configuration
-- **Linting**: ESLint with recommended rules
-- **Types**: TypeScript with strict mode enabled
-- **Imports**: Group imports by type (React/libraries/components/utils)
-- **Naming**: camelCase for variables/functions, PascalCase for components/classes
-- **Error Handling**: Always use try/catch for async operations
-- **Components**: Prefer functional components with hooks
-- **State Management**: Use React Context for global state
-- **Documentation**: JSDoc for functions, interfaces and complex logic
+## Feature Status
 
-## Project Structure
-- `/src`: Source code
-- `/tests`: Test files with `.test.ts` extension
-- `/public`: Static assets
+### Account and Proxy Rotation
+- Account Rotation: ✅ Implemented, ready for testing
+- Proxy Rotation: ✅ Implemented, ready for testing
+- Integration with Proxy: ✅ Implemented, ready for testing
+- Database migrations: ✅ Implemented, ready to run
+
+### Time-based Crawling
+- Time range columns in database: ✅ Migration created, needs to be applied
+- Configuration UI: ✅ Implemented in configTool
+- Scheduling logic: ✅ Implemented in dynamicCrawl
+
+## Troubleshooting Notes
+
+### TypeScript build errors
+- We fixed the TS1062 error in rotatingRedditClient.ts related to circular type references
+- This was solved by:
+  1. Using executeRedditRequest to handle recursive calls
+  2. Adding type casting (`as unknown as T`) to break the circular reference
+  3. Using `async` functions with explicit return types
+
+### PostgreSQL
+- Always remember to run migrations after schema changes: `npm run migrate`
+- The crawl_configs table has been updated with start_time and end_time columns
+- A new proxy_servers table has been created
+
+## Testing Plan
+1. Run migrations: `npm run migrate`
+2. Add Reddit accounts: `npm run accounts`
+3. Add proxy servers: `npm run proxy`
+4. Configure crawling schedules: `npm run config`
+5. Test account rotation: `npm run continuous-crawl`

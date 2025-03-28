@@ -4,7 +4,7 @@
  */
 import { CommentTracker } from './utils/commentTracker';
 import { config } from './config/config';
-import { setupHttpAgents } from './utils/proxy';
+import { setupHttpAgents } from './utils/rotatingRedditClient';
 import { ensureDirectoryExists } from './utils/fileHelper';
 import { Pool } from 'pg';
 
@@ -12,7 +12,7 @@ import { Pool } from 'pg';
 ensureDirectoryExists(config.app.outputDir);
 
 // Cấu hình HTTP agents
-setupHttpAgents();
+(async () => { await setupHttpAgents(); })().catch(err => console.error('Error setting up HTTP agents:', err));
 
 // Tạo instance của CommentTracker
 const commentTracker = new CommentTracker();

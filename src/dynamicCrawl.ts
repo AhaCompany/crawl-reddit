@@ -1,5 +1,5 @@
 import { config } from './config/config';
-import { setupHttpAgents } from './utils/proxy';
+import { setupHttpAgents as setupProxy } from './utils/rotatingRedditClient';
 import { ensureDirectoryExists } from './utils/fileHelper';
 import { closePool } from './utils/postgresHelper';
 import { initializeStorageSystems, closeStorageSystems } from './storage/storageFacade';
@@ -11,7 +11,7 @@ import { getCrawlerManager } from './utils/dynamicCrawlers';
 async function startDynamicCrawlers() {
   try {
     // Configure global HTTP agents to avoid connection issues
-    setupHttpAgents();
+    await setupProxy();
     
     // Initialize all storage systems based on configuration
     await initializeStorageSystems();

@@ -1,6 +1,6 @@
 import { CommentTracker } from './utils/commentTracker';
 import { config } from './config/config';
-import { setupHttpAgents } from './utils/proxy';
+import { setupHttpAgents } from './utils/rotatingRedditClient';
 import { ensureDirectoryExists } from './utils/fileHelper';
 import * as cron from 'node-cron';
 
@@ -8,7 +8,7 @@ import * as cron from 'node-cron';
 ensureDirectoryExists(config.app.outputDir);
 
 // Configure HTTP agents to avoid connection issues
-setupHttpAgents();
+(async () => { await setupHttpAgents(); })().catch(err => console.error('Error setting up HTTP agents:', err));
 
 // Tạo instance của CommentTracker
 const commentTracker = new CommentTracker();

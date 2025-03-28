@@ -14,6 +14,8 @@ interface CrawlerConfig {
   sort_by: 'hot' | 'new' | 'top' | 'rising';
   time_range: 'hour' | 'day' | 'week' | 'month' | 'year' | 'all';
   is_active: boolean;
+  start_time: Date | null; // Thời gian bắt đầu crawl
+  end_time: Date | null;   // Thời gian kết thúc crawl
 }
 
 // Class quản lý dynamic crawlers
@@ -50,7 +52,7 @@ export class DynamicCrawlerManager {
       const now = Date.now();
       if (this.configsCache.length === 0 || now - this.lastConfigCheck > this.CHECK_INTERVAL) {
         const result = await this.pool.query(`
-          SELECT id, subreddit, crawl_interval, post_limit, sort_by, time_range, is_active
+          SELECT id, subreddit, crawl_interval, post_limit, sort_by, time_range, is_active, start_time, end_time
           FROM crawl_configs
           ORDER BY id
         `);
@@ -119,20 +121,33 @@ export class DynamicCrawlerManager {
    */
   private async generatePM2Config(configs: CrawlerConfig[]): Promise<void> {
     try {
-      const apps = configs
-        .filter(config => config.is_active)
-        .map(config => ({
-          name: `reddit-crawler-${config.subreddit}`,
-          script: 'npm',
-          args: `run continuous-crawl -- ${config.subreddit} ${config.crawl_interval} ${config.post_limit} ${config.sort_by} ${config.time_range}`,
-          watch: false,
-          autorestart: true,
-          max_memory_restart: '500M',
-          env: {
-            NODE_ENV: 'production',
-          },
-          log_date_format: 'YYYY-MM-DD HH:mm:ss',
-        }));
+      const now = new Date();
+      const activeConfigs = configs.filter(config => {
+        // Kiểm tra xem có nằm trong khoảng thời gian crawl không
+        if (!config.is_active) return false;
+        
+        // Nếu không có khoảng thời gian giới hạn, luôn active
+        if (!config.start_time && !config.end_time) return true;
+        
+        // Kiểm tra giới hạn thời gian
+        const afterStart = !config.start_time || now >= new Date(config.start_time);
+        const beforeEnd = !config.end_time || now <= new Date(config.end_time);
+        
+        return afterStart && beforeEnd;
+      });
+      
+      const apps = activeConfigs.map(config => ({
+        name: `reddit-crawler-${config.subreddit}`,
+        script: 'npm',
+        args: `run continuous-crawl -- ${config.subreddit} ${config.crawl_interval} ${config.post_limit} ${config.sort_by} ${config.time_range}`,
+        watch: false,
+        autorestart: true,
+        max_memory_restart: '500M',
+        env: {
+          NODE_ENV: 'production',
+        },
+        log_date_format: 'YYYY-MM-DD HH:mm:ss',
+      }));
 
       const configContent = `
 // File này được tạo tự động, không sửa trực tiếp
@@ -221,21 +236,25 @@ module.exports = {
     crawlInterval: string = '30m',
     postLimit: number = 50,
     sortBy: 'hot' | 'new' | 'top' | 'rising' = 'new',
-    timeRange: 'hour' | 'day' | 'week' | 'month' | 'year' | 'all' = 'day'
+    timeRange: 'hour' | 'day' | 'week' | 'month' | 'year' | 'all' = 'day',
+    startTime: Date | null = null,
+    endTime: Date | null = null
   ): Promise<boolean> {
     try {
       await this.pool.query(`
         INSERT INTO crawl_configs 
-        (subreddit, crawl_interval, post_limit, sort_by, time_range) 
-        VALUES ($1, $2, $3, $4, $5)
+        (subreddit, crawl_interval, post_limit, sort_by, time_range, start_time, end_time) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7)
         ON CONFLICT (subreddit) DO UPDATE SET
           crawl_interval = $2,
           post_limit = $3,
           sort_by = $4,
           time_range = $5,
+          start_time = $6,
+          end_time = $7,
           is_active = TRUE,
           updated_at = NOW()
-      `, [subreddit, crawlInterval, postLimit, sortBy, timeRange]);
+      `, [subreddit, crawlInterval, postLimit, sortBy, timeRange, startTime, endTime]);
 
       // Reset cache to force reload
       this.lastConfigCheck = 0;

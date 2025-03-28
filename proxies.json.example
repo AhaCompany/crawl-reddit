@@ -1,0 +1,24 @@
+[
+  {
+    "host": "proxy1.example.com",
+    "port": 8080,
+    "protocol": "http",
+    "username": "user1",
+    "password": "pass1",
+    "country": "US"
+  },
+  {
+    "host": "proxy2.example.com",
+    "port": 3128,
+    "protocol": "https",
+    "username": "user2",
+    "password": "pass2",
+    "country": "DE"
+  },
+  {
+    "host": "proxy3.example.com",
+    "port": 1080,
+    "protocol": "socks",
+    "country": "UK"
+  }
+]

@@ -16,7 +16,10 @@
     "comment-track": "npm run build && node dist/commentTrackingTool.js",
     "incremental-comments": "npm run build && node dist/incrementalCommentCrawl.js",
     "auto-track": "npm run build && node dist/autoTrackPosts.js",
-    "import-all-posts": "npm run build && node dist/importAllPosts.js"
+    "import-all-posts": "npm run build && node dist/importAllPosts.js",
+    "proxy": "npm run build && node dist/proxyTool.js",
+    "accounts": "npm run build && node dist/accountsManager.js",
+    "migrate": "npm run build && node dist/migrationTool.js"
   },
   "keywords": [
     "reddit",
@@ -31,6 +34,8 @@
     "@types/pg": "^8.11.11",
     "axios": "^1.8.3",
     "dotenv": "^16.4.7",
+    "http-proxy-agent": "^5.0.0",
+    "https-proxy-agent": "^5.0.1",
     "node-cron": "^3.0.3",
     "node-fetch": "^3.3.2",
     "pg": "^8.14.1",

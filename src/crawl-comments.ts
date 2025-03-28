@@ -1,8 +1,15 @@
 import { directCrawlComments } from './utils/direct-comment-crawler';
-import { setupHttpAgents } from './utils/proxy';
+import { setupHttpAgents } from './utils/rotatingRedditClient';
 
 // Configure HTTP agents to avoid connection issues
-setupHttpAgents();
+// This is now async but we'll make this file work with the old pattern
+(async () => {
+  try {
+    await setupHttpAgents();
+  } catch (error) {
+    console.error('Error setting up HTTP agents:', error);
+  }
+})();
 
 async function main() {
   try {

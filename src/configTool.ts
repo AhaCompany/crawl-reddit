@@ -26,7 +26,7 @@ async function processCommand() {
       case 'add':
         if (args.length < 3) {
           console.error('Missing required parameters for add command');
-          console.log('Usage: npm run config -- add <subreddit> <interval> [limit] [sort_by] [time_range]');
+          console.log('Usage: npm run config -- add <subreddit> <interval> [limit] [sort_by] [time_range] [start_time] [end_time]');
           return;
         }
         
@@ -35,8 +35,10 @@ async function processCommand() {
         const limit = parseInt(args[3] || '50', 10);
         const sortBy = args[4] || 'new';
         const timeRange = args[5] || 'day';
+        const startTime = args[6] || null;
+        const endTime = args[7] || null;
         
-        await configManager.addOrUpdateConfig(subreddit, interval, limit, sortBy, timeRange);
+        await configManager.addOrUpdateConfig(subreddit, interval, limit, sortBy, timeRange, startTime, endTime);
         break;
 
       case 'disable':
@@ -84,7 +86,7 @@ Usage: npm run config -- <command> [options]
 
 Commands:
   list                             List all crawler configurations
-  add <subreddit> <interval> [limit] [sort_by] [time_range]  
+  add <subreddit> <interval> [limit] [sort_by] [time_range] [start_time] [end_time]  
                                    Add or update a crawler configuration
   disable <subreddit>              Disable a crawler
   delete <subreddit>               Delete a crawler configuration
@@ -93,6 +95,7 @@ Commands:
 Examples:
   npm run config -- list
   npm run config -- add bitcoin 5m 25 new day
+  npm run config -- add ethereum 10m 50 top week "2024-05-01" "2024-06-01"
   npm run config -- disable programming
   npm run config -- delete technology
 
@@ -102,6 +105,8 @@ Parameters:
   [limit]       Number of posts to crawl (default: 50)
   [sort_by]     Sort method: hot, new, top, rising (default: new)
   [time_range]  Time range: hour, day, week, month, year, all (default: day)
+  [start_time]  Optional start time for crawler (YYYY-MM-DD format)
+  [end_time]    Optional end time for crawler (YYYY-MM-DD format)
   `);
 }
 

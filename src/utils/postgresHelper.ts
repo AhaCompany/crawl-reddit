@@ -3,6 +3,8 @@ import format from 'pg-format';
 import { config } from '../config/config';
 import { RedditPost } from '../models/Post';
 import { RedditComment } from '../models/Comment';
+import * as fs from 'fs';
+import * as path from 'path';
 
 // Tạo pool kết nối PostgreSQL
 const pool = new Pool({
@@ -98,6 +100,70 @@ export const initializeTables = async (): Promise<void> => {
   } catch (error) {
     await client.query('ROLLBACK');
     console.error('Error initializing PostgreSQL tables:', error);
+    throw error;
+  } finally {
+    client.release();
+  }
+};
+
+/**
+ * Chạy tất cả các file SQL trong thư mục migrations
+ */
+export const runMigrations = async (): Promise<void> => {
+  const client = await pool.connect();
+  
+  try {
+    // Tạo bảng migrations để theo dõi các migration đã chạy
+    await client.query(`
+      CREATE TABLE IF NOT EXISTS migrations (
+        id SERIAL PRIMARY KEY,
+        filename VARCHAR(255) NOT NULL UNIQUE,
+        applied_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+      )
+    `);
+    
+    // Lấy danh sách các file SQL trong thư mục migrations
+    const migrationsDir = path.join(process.cwd(), 'migrations');
+    const files = fs.readdirSync(migrationsDir)
+      .filter(file => file.endsWith('.sql'))
+      .sort(); // Đảm bảo thứ tự chạy theo alphabet
+    
+    // Lấy danh sách các migration đã chạy
+    const result = await client.query('SELECT filename FROM migrations');
+    const appliedMigrations = result.rows.map(row => row.filename);
+    
+    // Chạy từng file SQL nếu chưa được áp dụng
+    for (const file of files) {
+      if (!appliedMigrations.includes(file)) {
+        const filePath = path.join(migrationsDir, file);
+        const sql = fs.readFileSync(filePath, 'utf8');
+        
+        await client.query('BEGIN');
+        try {
+          // Thực thi SQL
+          await client.query(sql);
+          
+          // Ghi nhận migration đã được áp dụng
+          await client.query(
+            'INSERT INTO migrations(filename) VALUES($1)',
+            [file]
+          );
+          
+          await client.query('COMMIT');
+          console.log(`Applied migration: ${file}`);
+        } catch (error) {
+          await client.query('ROLLBACK');
+          console.error(`Error applying migration ${file}:`, error);
+          throw error;
+        }
+      } else {
+        console.log(`Migration already applied: ${file}`);
+      }
+    }
+    
+    console.log('All migrations completed successfully');
+  } catch (error) {
+    console.error('Error running migrations:', error);
     throw error;
   } finally {
     client.release();
