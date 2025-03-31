@@ -51,16 +51,29 @@ export class PostgresMinerStorage {
    * Khởi tạo cấu trúc database
    */
   public async initialize(): Promise<void> {
+    console.log('[DEBUG] initialize() called. Checking if already initialized...');
     if (this.isInitialized) {
+      console.log('[DEBUG] Already initialized. Skipping initialization.');
       return;
     }
 
-    const client = await this.pool.connect();
+    console.log('[DEBUG] Connecting to PostgreSQL database...');
+    console.log(`[DEBUG] Connection details: Host: ${config.postgresql.host}, Port: ${config.postgresql.port}, Database: ${config.postgresql.database}, User: ${config.postgresql.user}`);
     
+    let client;
     try {
+      client = await this.pool.connect();
+      console.log('[DEBUG] Successfully connected to PostgreSQL');
+      
+      // Test connection
+      const testResult = await client.query('SELECT NOW() as time');
+      console.log(`[DEBUG] PostgreSQL server time: ${testResult.rows[0].time}`);
+      
+      console.log('[DEBUG] Starting transaction to create tables...');
       await client.query('BEGIN');
       
       // Tạo bảng DataEntity với cấu trúc giống SqliteMinerStorage
+      console.log('[DEBUG] Creating DataEntity table if not exists...');
       await client.query(`
         CREATE TABLE IF NOT EXISTS DataEntity (
           uri                 TEXT            PRIMARY KEY,
@@ -72,22 +85,60 @@ export class PostgresMinerStorage {
           contentSizeBytes    INTEGER         NOT NULL
         )
       `);
+      console.log('[DEBUG] DataEntity table created or already exists');
       
       // Tạo index để tăng tốc truy vấn
+      console.log('[DEBUG] Creating indexes if not exist...');
       await client.query(`
         CREATE INDEX IF NOT EXISTS idx_dataentity_timebucketid ON DataEntity(timeBucketId);
         CREATE INDEX IF NOT EXISTS idx_dataentity_label ON DataEntity(label);
       `);
+      console.log('[DEBUG] Indexes created or already exist');
       
       await client.query('COMMIT');
-      console.log('PostgreSQL tables initialized for MinerStorage format');
+      console.log('[DEBUG] Transaction committed successfully');
+      
+      // Kiểm tra bảng đã tồn tại
+      const tableCheck = await client.query(`
+        SELECT EXISTS (
+          SELECT FROM information_schema.tables 
+          WHERE table_schema = 'public' 
+          AND table_name = 'dataentity'
+        );
+      `);
+      
+      if (tableCheck.rows[0].exists) {
+        console.log('[DEBUG] Verified that DataEntity table exists');
+      } else {
+        console.error('[ERROR] DataEntity table does not exist after creation attempt!');
+      }
+      
+      console.log('[INFO] PostgreSQL tables initialized for MinerStorage format');
       this.isInitialized = true;
-    } catch (error) {
-      await client.query('ROLLBACK');
-      console.error('Error initializing PostgreSQL tables:', error);
+    } catch (err) {
+      const error = err as any;
+      console.error('[ERROR] Failed to initialize PostgreSQL tables:', error);
+      if (error.code) {
+        console.error(`[ERROR] PostgreSQL error code: ${error.code}`);
+      }
+      if (error.detail) {
+        console.error(`[ERROR] PostgreSQL error detail: ${error.detail}`);
+      }
+      if (client) {
+        try {
+          console.log('[DEBUG] Rolling back transaction...');
+          await client.query('ROLLBACK');
+          console.log('[DEBUG] Transaction rolled back successfully');
+        } catch (rollbackErr) {
+          console.error('[ERROR] Failed to rollback transaction:', rollbackErr);
+        }
+      }
       throw error;
     } finally {
-      client.release();
+      if (client) {
+        console.log('[DEBUG] Releasing PostgreSQL client back to pool');
+        client.release();
+      }
     }
   }
 
@@ -142,15 +193,31 @@ export class PostgresMinerStorage {
    * @returns Promise<boolean> true nếu thành công
    */
   public async storeRedditContent(content: RedditContent): Promise<boolean> {
+    console.log(`[DEBUG] Attempting to store Reddit content: ${content.id} (${content.url})`);
+    
     if (!this.isInitialized) {
-      await this.initialize();
+      console.log('[DEBUG] PostgresMinerStorage not initialized. Initializing...');
+      try {
+        await this.initialize();
+        console.log('[DEBUG] PostgresMinerStorage initialized successfully');
+      } catch (initError) {
+        console.error('[ERROR] Failed to initialize PostgresMinerStorage:', initError);
+        return false;
+      }
     }
 
-    const client = await this.pool.connect();
-    
+    let client;
     try {
-      const entity = this.convertToDataEntity(content);
+      console.log('[DEBUG] Getting PostgreSQL client from pool...');
+      client = await this.pool.connect();
+      console.log('[DEBUG] PostgreSQL client obtained successfully');
       
+      console.log('[DEBUG] Converting Reddit content to DataEntity...');
+      const entity = this.convertToDataEntity(content);
+      console.log(`[DEBUG] Converted to DataEntity. URI: ${entity.uri}, Label: ${entity.label}, Size: ${entity.contentSizeBytes} bytes`);
+      
+      console.log('[DEBUG] Executing INSERT/UPDATE query to PostgreSQL...');
+      const queryStart = Date.now();
       await client.query(
         `INSERT INTO DataEntity 
         (uri, datetime, timeBucketId, source, label, content, contentSizeBytes) 
@@ -172,13 +239,28 @@ export class PostgresMinerStorage {
           entity.contentSizeBytes
         ]
       );
+      const queryDuration = Date.now() - queryStart;
+      console.log(`[DEBUG] Query executed successfully in ${queryDuration}ms`);
       
       return true;
-    } catch (error) {
-      console.error('Error storing Reddit content:', error);
+    } catch (err) {
+      const error = err as any;
+      console.error('[ERROR] Failed to store Reddit content:', error);
+      if (error.code) {
+        console.error(`[ERROR] PostgreSQL error code: ${error.code}`);
+      }
+      if (error.detail) {
+        console.error(`[ERROR] PostgreSQL error detail: ${error.detail}`);
+      }
+      if (error.stack) {
+        console.error(`[ERROR] Stack trace: ${error.stack}`);
+      }
       return false;
     } finally {
-      client.release();
+      if (client) {
+        console.log('[DEBUG] Releasing PostgreSQL client back to pool');
+        client.release();
+      }
     }
   }
 
@@ -188,21 +270,39 @@ export class PostgresMinerStorage {
    * @returns Promise<number> Số lượng đối tượng được lưu thành công
    */
   public async storeBatch(contents: RedditContent[]): Promise<number> {
+    console.log(`[DEBUG] Attempting to store batch of ${contents.length} Reddit contents`);
+    
     if (!this.isInitialized) {
-      await this.initialize();
+      console.log('[DEBUG] PostgresMinerStorage not initialized. Initializing...');
+      try {
+        await this.initialize();
+        console.log('[DEBUG] PostgresMinerStorage initialized successfully');
+      } catch (initError) {
+        console.error('[ERROR] Failed to initialize PostgresMinerStorage:', initError);
+        return 0;
+      }
     }
 
-    const client = await this.pool.connect();
+    let client;
     let successCount = 0;
     
     try {
+      console.log('[DEBUG] Getting PostgreSQL client from pool...');
+      client = await this.pool.connect();
+      console.log('[DEBUG] PostgreSQL client obtained successfully');
+      
       // Bắt đầu transaction
+      console.log('[DEBUG] Beginning transaction...');
       await client.query('BEGIN');
+      console.log('[DEBUG] Transaction started successfully');
       
       for (const content of contents) {
         try {
+          console.log(`[DEBUG] Processing content: ${content.id} (${content.url})`);
           const entity = this.convertToDataEntity(content);
+          console.log(`[DEBUG] Converted to DataEntity. URI: ${entity.uri}, Label: ${entity.label}`);
           
+          const queryStart = Date.now();
           await client.query(
             `INSERT INTO DataEntity 
             (uri, datetime, timeBucketId, source, label, content, contentSizeBytes) 
@@ -224,25 +324,56 @@ export class PostgresMinerStorage {
               entity.contentSizeBytes
             ]
           );
+          const queryDuration = Date.now() - queryStart;
           
           successCount++;
-        } catch (error) {
-          console.error(`Error storing item ${content.id}:`, error);
+          console.log(`[DEBUG] Content ${content.id} stored successfully in ${queryDuration}ms (${successCount}/${contents.length})`);
+        } catch (err) {
+          const error = err as any;
+          console.error(`[ERROR] Failed to store item ${content.id}:`, error);
+          if (error.code) {
+            console.error(`[ERROR] PostgreSQL error code: ${error.code}`);
+          }
+          if (error.detail) {
+            console.error(`[ERROR] PostgreSQL error detail: ${error.detail}`);
+          }
           // Tiếp tục với item tiếp theo mà không phá vỡ transaction
         }
       }
       
       // Commit transaction
+      console.log('[DEBUG] Committing transaction...');
       await client.query('COMMIT');
+      console.log(`[DEBUG] Transaction committed successfully. Stored ${successCount}/${contents.length} items`);
       
       return successCount;
-    } catch (error) {
+    } catch (err) {
       // Rollback nếu có lỗi
-      await client.query('ROLLBACK');
-      console.error('Transaction failed:', error);
+      const error = err as any;
+      console.error('[ERROR] Transaction failed:', error);
+      if (error.code) {
+        console.error(`[ERROR] PostgreSQL error code: ${error.code}`);
+      }
+      if (error.stack) {
+        console.error(`[ERROR] Stack trace: ${error.stack}`);
+      }
+      
+      if (client) {
+        try {
+          console.log('[DEBUG] Rolling back transaction...');
+          await client.query('ROLLBACK');
+          console.log('[DEBUG] Transaction rolled back successfully');
+        } catch (rollbackErr) {
+          console.error('[ERROR] Failed to rollback transaction:', rollbackErr);
+        }
+      }
+      
       return successCount;
     } finally {
-      client.release();
+      if (client) {
+        console.log('[DEBUG] Releasing PostgreSQL client back to pool');
+        client.release();
+      }
     }
   }
 

@@ -6,6 +6,10 @@ import { RedditComment } from '../models/Comment';
 import * as fs from 'fs';
 import * as path from 'path';
 
+// Log cấu hình PostgreSQL (che bớt password)
+console.log(`[DEBUG] PostgreSQL configuration: Host: ${config.postgresql.host}, Port: ${config.postgresql.port}, Database: ${config.postgresql.database}, User: ${config.postgresql.user}`);
+console.log(`[DEBUG] PostgreSQL pool config: Max connections: ${config.postgresql.max}, Idle timeout: ${config.postgresql.idleTimeoutMillis}ms, Connection timeout: ${config.postgresql.connectionTimeoutMillis}ms`);
+
 // Tạo pool kết nối PostgreSQL
 const pool = new Pool({
   host: config.postgresql.host,
@@ -18,22 +22,108 @@ const pool = new Pool({
   connectionTimeoutMillis: config.postgresql.connectionTimeoutMillis,
 });
 
+// Thêm event listeners để debug kết nối
+pool.on('connect', (client) => {
+  console.log('[DEBUG] New PostgreSQL client connected');
+});
+
+pool.on('acquire', (client) => {
+  console.log('[DEBUG] PostgreSQL client acquired from pool');
+});
+
+pool.on('remove', (client) => {
+  console.log('[DEBUG] PostgreSQL client removed from pool');
+});
+
 // Xử lý sự kiện lỗi của pool
 pool.on('error', (err: Error) => {
-  console.error('Unexpected error on idle PostgreSQL client', err);
+  console.error('[ERROR] Unexpected error on idle PostgreSQL client:', err);
+  if (err.stack) {
+    console.error('[ERROR] Stack trace:', err.stack);
+  }
   process.exit(-1);
 });
+
+/**
+ * Test kết nối đến PostgreSQL database
+ */
+export const testConnection = async (): Promise<boolean> => {
+  console.log('[DEBUG] Testing PostgreSQL connection...');
+  let client;
+  
+  try {
+    console.log('[DEBUG] Attempting to connect to PostgreSQL...');
+    client = await pool.connect();
+    console.log('[DEBUG] Successfully connected to PostgreSQL');
+    
+    // Test simple query
+    const result = await client.query('SELECT NOW() as time');
+    console.log(`[DEBUG] PostgreSQL server time: ${result.rows[0].time}`);
+    
+    // Test database existence
+    const dbResult = await client.query(`
+      SELECT datname FROM pg_database WHERE datname = $1
+    `, [config.postgresql.database]);
+    
+    if (dbResult.rowCount && dbResult.rowCount > 0) {
+      console.log(`[DEBUG] Database '${config.postgresql.database}' exists`);
+    } else {
+      console.error(`[ERROR] Database '${config.postgresql.database}' does not exist!`);
+      return false;
+    }
+    
+    // Test user permissions
+    try {
+      await client.query('CREATE TABLE IF NOT EXISTS _test_permissions (id SERIAL PRIMARY KEY)');
+      await client.query('DROP TABLE _test_permissions');
+      console.log('[DEBUG] User has CREATE/DROP table permissions');
+    } catch (permError) {
+      console.error('[ERROR] User permissions test failed:', permError);
+      return false;
+    }
+    
+    console.log('[DEBUG] PostgreSQL connection test successful');
+    return true;
+  } catch (err) {
+    const error = err as any;
+    console.error('[ERROR] PostgreSQL connection test failed:', error);
+    if (error.code) {
+      console.error(`[ERROR] PostgreSQL error code: ${error.code}`);
+    }
+    if (error.detail) {
+      console.error(`[ERROR] PostgreSQL error detail: ${error.detail}`);
+    }
+    return false;
+  } finally {
+    if (client) {
+      client.release();
+      console.log('[DEBUG] PostgreSQL test client released');
+    }
+  }
+};
 
 /**
  * Tạo cấu trúc bảng ban đầu cho database (nếu chưa tồn tại)
  */
 export const initializeTables = async (): Promise<void> => {
+  console.log('[DEBUG] Initializing PostgreSQL tables...');
+  
+  // Test connection first
+  const connectionOk = await testConnection();
+  if (!connectionOk) {
+    console.error('[ERROR] Cannot initialize tables due to connection failure');
+    throw new Error('PostgreSQL connection failed during initialization');
+  }
+  
+  console.log('[DEBUG] Getting client from pool for table initialization...');
   const client = await pool.connect();
   
   try {
+    console.log('[DEBUG] Beginning transaction...');
     await client.query('BEGIN');
     
     // Tạo bảng subreddits
+    console.log('[DEBUG] Creating subreddits table...');
     await client.query(`
       CREATE TABLE IF NOT EXISTS subreddits (
         id SERIAL PRIMARY KEY,
@@ -43,6 +133,7 @@ export const initializeTables = async (): Promise<void> => {
     `);
     
     // Tạo bảng posts
+    console.log('[DEBUG] Creating posts table...');
     await client.query(`
       CREATE TABLE IF NOT EXISTS posts (
         id VARCHAR(50) PRIMARY KEY,
@@ -73,6 +164,7 @@ export const initializeTables = async (): Promise<void> => {
     `);
     
     // Tạo bảng comments
+    console.log('[DEBUG] Creating comments table...');
     await client.query(`
       CREATE TABLE IF NOT EXISTS comments (
         id VARCHAR(50) PRIMARY KEY,
@@ -92,16 +184,45 @@ export const initializeTables = async (): Promise<void> => {
     `);
     
     // Tạo index để tìm kiếm nhanh hơn
+    console.log('[DEBUG] Creating indexes...');
     await client.query('CREATE INDEX IF NOT EXISTS idx_posts_subreddit ON posts(subreddit)');
     await client.query('CREATE INDEX IF NOT EXISTS idx_comments_post_id ON comments(post_id)');
     
+    console.log('[DEBUG] Committing transaction...');
     await client.query('COMMIT');
-    console.log('PostgreSQL tables initialized successfully');
-  } catch (error) {
-    await client.query('ROLLBACK');
-    console.error('Error initializing PostgreSQL tables:', error);
+    
+    // Verify tables exist
+    const tablesCheck = await client.query(`
+      SELECT table_name FROM information_schema.tables 
+      WHERE table_schema = 'public' 
+      AND table_name IN ('subreddits', 'posts', 'comments')
+    `);
+    
+    const existingTables = tablesCheck.rows.map(row => row.table_name);
+    console.log(`[DEBUG] Verified tables exist: ${existingTables.join(', ')}`);
+    
+    console.log('[INFO] PostgreSQL tables initialized successfully');
+  } catch (err) {
+    const error = err as any;
+    console.error('[ERROR] Error initializing PostgreSQL tables:', error);
+    if (error.code) {
+      console.error(`[ERROR] PostgreSQL error code: ${error.code}`);
+    }
+    if (error.detail) {
+      console.error(`[ERROR] PostgreSQL error detail: ${error.detail}`);
+    }
+    
+    try {
+      console.log('[DEBUG] Rolling back transaction...');
+      await client.query('ROLLBACK');
+      console.log('[DEBUG] Transaction rolled back successfully');
+    } catch (rollbackErr) {
+      console.error('[ERROR] Failed to rollback transaction:', rollbackErr);
+    }
+    
     throw error;
   } finally {
+    console.log('[DEBUG] Releasing client back to pool');
     client.release();
   }
 };
@@ -151,7 +272,8 @@ export const runMigrations = async (): Promise<void> => {
           
           await client.query('COMMIT');
           console.log(`Applied migration: ${file}`);
-        } catch (error) {
+        } catch (err) {
+          const error = err as any;
           await client.query('ROLLBACK');
           console.error(`Error applying migration ${file}:`, error);
           throw error;
@@ -162,7 +284,8 @@ export const runMigrations = async (): Promise<void> => {
     }
     
     console.log('All migrations completed successfully');
-  } catch (error) {
+  } catch (err) {
+    const error = err as any;
     console.error('Error running migrations:', error);
     throw error;
   } finally {
@@ -234,7 +357,8 @@ export const savePosts = async (subreddit: string, posts: RedditPost[]): Promise
     
     await client.query('COMMIT');
     console.log(`Saved ${posts.length} posts from r/${subreddit} to PostgreSQL`);
-  } catch (error) {
+  } catch (err) {
+    const error = err as any;
     await client.query('ROLLBACK');
     console.error('Error saving posts to PostgreSQL:', error);
     throw error;
@@ -326,7 +450,8 @@ export const saveComments = async (postId: string, comments: RedditComment[]): P
     
     await client.query('COMMIT');
     console.log(`Saved comments for post ${postId} to PostgreSQL`);
-  } catch (error) {
+  } catch (err) {
+    const error = err as any;
     await client.query('ROLLBACK');
     console.error('Error saving comments to PostgreSQL:', error);
     throw error;
