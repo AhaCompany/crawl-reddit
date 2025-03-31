@@ -222,7 +222,7 @@ export class PostgresMinerStorage {
         `INSERT INTO DataEntity 
         (uri, datetime, timeBucketId, source, label, content, contentSizeBytes) 
         VALUES ($1, $2, $3, $4, $5, $6, $7)
-        ON CONFLICT (uri) DO UPDATE SET
+        ON CONFLICT ON CONSTRAINT dataentity_pkey DO UPDATE SET
           datetime = $2,
           timeBucketId = $3,
           source = $4,
@@ -307,7 +307,7 @@ export class PostgresMinerStorage {
             `INSERT INTO DataEntity 
             (uri, datetime, timeBucketId, source, label, content, contentSizeBytes) 
             VALUES ($1, $2, $3, $4, $5, $6, $7)
-            ON CONFLICT (uri) DO UPDATE SET
+            ON CONFLICT ON CONSTRAINT dataentity_pkey DO UPDATE SET
               datetime = $2,
               timeBucketId = $3,
               source = $4,
