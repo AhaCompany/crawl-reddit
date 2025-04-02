@@ -204,14 +204,21 @@ module.exports = {
   private parseIntervalToCron(interval: string): string {
     // Xử lý trường hợp đặc biệt "@once" - chạy một lần duy nhất
     if (interval === '@once') {
-      return '@once';
+      // Sử dụng cron expression hợp lệ để chạy ở tương lai xa
+      // "0 0 31 12 *" ~ chạy lúc 00:00 vào ngày 31/12 (nhưng sẽ ghi đè trong code)
+      return "0 0 31 12 *";
     }
     
     // Xử lý cron expression trực tiếp nếu được cung cấp (ví dụ "0 */6 * * *")
     if (interval.includes(' ') && interval.split(' ').length === 5) {
-      // Validate cron expression
-      if (cron.validate(interval)) {
-        return interval;
+      try {
+        // Validate cron expression
+        if (cron.validate(interval)) {
+          return interval;
+        }
+      } catch (error) {
+        console.error(`Invalid cron expression: ${interval}. Using default 5m.`);
+        return '*/5 * * * *';
       }
     }
     

@@ -78,48 +78,92 @@ class CrawlScheduler {
       }
     };
     
-    // Xử lý biểu thức cron đặc biệt "@once" để chạy một lần duy nhất
+    // Xử lý cấu hình một lần thông qua dữ liệu đặc biệt
     let task;
     
-    if (cronExpression === '@once') {
-      // Tạo task giả định sẽ chạy ngay khi khởi động
-      const taskObj = {
-        isOnce: true,
-        hasRun: false,
-        start: () => {
-          console.log(`[${new Date().toISOString()}] Running one-time crawl for r/${subreddit}`);
-          // Thực thi hàm crawl ngay lập tức nếu chưa chạy
-          if (!taskObj.hasRun) {
-            setTimeout(async () => {
-              try {
-                await crawlFunction();
-                taskObj.hasRun = true;
-                
-                // Tự động vô hiệu hóa cấu hình sau khi chạy xong
-                console.log(`One-time crawl for r/${subreddit} completed - auto-disabling config`);
-                
-                // Đánh dấu là đã chạy xong
-                const task = this.tasks.get(taskId);
-                if (task) {
-                  task.isOneTimeCompleted = true;
-                }
-                
-                // Chỗ này có thể thêm code để tự vô hiệu hóa cấu hình trong DB
-                // TODO: Implement auto-disable in database
-              } catch (error) {
-                console.error(`Error in one-time crawl for ${subreddit}:`, error);
-              }
-            }, 100);
-          } else {
-            console.log(`One-time task for r/${subreddit} already executed - skipping`);
-          }
-        },
-        stop: () => {
-          console.log(`Stopped one-time crawl task for r/${subreddit}`);
-        }
+    // Kiểm tra nếu là cấu hình "chạy một lần" 
+    // - Từ DB, sẽ là "0 0 31 12 *" (đã được chuyển đổi từ @once)
+    // - Trực tiếp từ code, có thể vẫn là "@once"
+    const isOnceTask = cronExpression === '0 0 31 12 *' ||
+                      (subreddit.includes('-202') && (subreddit.match(/-\d{8}-\d{2}$/) !== null));
+    
+    if (isOnceTask) {
+      console.log(`Setting up one-time task for r/${subreddit}`);
+      
+      // Tạo cron job hợp lệ cho PM2
+      const validCron = '59 23 31 12 *'; // 23:59 ngày 31/12
+      task = cron.schedule(validCron, async () => {
+        // Dummy function - sẽ không bao giờ được gọi qua cron
+      }, {
+        scheduled: false
+      });
+      
+      // Lưu tham chiếu đến scheduler để dùng trong các callback
+      const scheduler = this;
+      
+      // Lưu dữ liệu task với cờ đặc biệt
+      const taskData: CrawlTask = {
+        subreddit,
+        limit,
+        sortBy,
+        timeRange, 
+        isVerbose,
+        cronExpression: validCron,
+        task,
+        runCount: 0,
+        errors: 0,
+        isOneTimeCompleted: false
       };
       
-      task = taskObj;
+      // Lưu vào map
+      this.tasks.set(taskId, taskData);
+      
+      // Ghi đè phương thức start
+      const originalStart = task.start;
+      task.start = function() {
+        // Gọi start gốc
+        originalStart.call(this);
+        
+        // Thực thi hàm crawl ngay lập tức thay vì đợi cron kích hoạt
+        console.log(`[${new Date().toISOString()}] Running one-time crawl for r/${subreddit}`);
+        
+        // Kiểm tra xem đã chạy chưa
+        const taskInfo = scheduler.tasks.get(taskId);
+        if (taskInfo && taskInfo.isOneTimeCompleted) {
+          console.log(`One-time task for r/${subreddit} already executed - skipping`);
+          return;
+        }
+        
+        // Thực hiện crawl sau 100ms để đảm bảo mọi khởi tạo đã hoàn tất
+        setTimeout(async () => {
+          try {
+            // Gọi crawl function
+            await crawlFunction();
+            
+            // Đánh dấu đã hoàn thành
+            console.log(`One-time crawl for r/${subreddit} completed - auto-disabling config`);
+            
+            const task = scheduler.tasks.get(taskId);
+            if (task) {
+              task.isOneTimeCompleted = true;
+              task.lastRun = new Date();
+              task.runCount++;
+            }
+            
+            // Chỗ này có thể thêm code để tự vô hiệu hóa cấu hình trong DB
+            // TODO: Implement auto-disable in database
+          } catch (error) {
+            console.error(`Error in one-time crawl for ${subreddit}:`, error);
+            
+            const task = scheduler.tasks.get(taskId);
+            if (task) {
+              task.errors++;
+            }
+          }
+        }, 100);
+      };
+      
+      task = task;
     } else {
       // Tạo scheduled task bình thường với biểu thức cron
       task = cron.schedule(cronExpression, crawlFunction, {
@@ -127,18 +171,21 @@ class CrawlScheduler {
       });
     }
     
-    // Lưu task vào map
-    this.tasks.set(taskId, {
-      subreddit,
-      limit,
-      sortBy,
-      timeRange,
-      isVerbose,
-      cronExpression,
-      task,
-      runCount: 0,
-      errors: 0
-    });
+    // Nếu không phải task @once, lưu vào map  
+    if (cronExpression !== '@once') {
+      this.tasks.set(taskId, {
+        subreddit,
+        limit,
+        sortBy,
+        timeRange,
+        isVerbose,
+        cronExpression,
+        task,
+        runCount: 0,
+        errors: 0
+      });
+    }
+    // Với task @once đã được lưu trước đó trong code xử lý đặc biệt
     
     // Nếu scheduler đang chạy, thì chạy task mới luôn
     if (this.isRunning) {
