@@ -4,6 +4,7 @@ import { crawlScheduler } from './scheduler';
 import * as fs from 'fs';
 import * as path from 'path';
 import { spawn } from 'child_process';
+import cron from 'node-cron';
 
 // Interface cho cấu hình crawler
 interface CrawlerConfig {
@@ -197,13 +198,26 @@ module.exports = {
 
   /**
    * Parse interval string to cron expression
-   * @param interval Interval string (e.g. "5m", "1h", "30s")
+   * @param interval Interval string (e.g. "5m", "1h", "30s", "@once")
    * @returns Cron expression string
    */
   private parseIntervalToCron(interval: string): string {
+    // Xử lý trường hợp đặc biệt "@once" - chạy một lần duy nhất
+    if (interval === '@once') {
+      return '@once';
+    }
+    
+    // Xử lý cron expression trực tiếp nếu được cung cấp (ví dụ "0 */6 * * *")
+    if (interval.includes(' ') && interval.split(' ').length === 5) {
+      // Validate cron expression
+      if (cron.validate(interval)) {
+        return interval;
+      }
+    }
+    
     const match = interval.match(/^(\d+)([smh])$/);
     if (!match) {
-      throw new Error(`Invalid interval format: ${interval}. Use format like "30s", "5m", or "1h"`);
+      throw new Error(`Invalid interval format: ${interval}. Use format like "30s", "5m", or "1h", or "@once" for one-time execution`);
     }
     
     const value = parseInt(match[1], 10);
