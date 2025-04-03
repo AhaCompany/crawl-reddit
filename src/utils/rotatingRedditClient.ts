@@ -66,12 +66,21 @@ export async function setupHttpAgents(): Promise<void> {
 
 /**
  * Khởi tạo hoặc lấy client Reddit hiện tại
+ * @param forceNewClient Nếu true, sẽ tạo client mới ngay cả khi đã có client
  */
-export async function getRedditClient(): Promise<Snoowrap> {
+export async function getRedditClient(forceNewClient: boolean = false): Promise<Snoowrap> {
   try {
-    // Nếu đã có client, trả về
-    if (currentClient) {
+    // Nếu đã có client và không yêu cầu client mới, trả về client hiện tại
+    if (currentClient && !forceNewClient) {
+      console.log(`Using existing Reddit client with account: ${currentUsername}`);
       return currentClient;
+    }
+    
+    // Reset client hiện tại nếu tạo client mới
+    if (forceNewClient && currentClient) {
+      console.log(`Forcing rotation to new Reddit account from ${currentUsername}`);
+      currentClient = null;
+      currentUsername = null;
     }
     
     // Cấu hình HTTP agents
@@ -106,7 +115,7 @@ export async function getRedditClient(): Promise<Snoowrap> {
       debug: false
     });
     
-    console.log(`Using Reddit account: ${account.username}${currentProxyHost ? ` with proxy ${currentProxyHost}:${currentProxyPort}` : ''} [${account.dailyUsageCount}/${account.successCount + account.failCount} requests]`);
+    console.log(`Using new Reddit account: ${account.username}${currentProxyHost ? ` with proxy ${currentProxyHost}:${currentProxyPort}` : ''} [${account.dailyUsageCount}/${account.successCount + account.failCount} requests]`);
     
     return currentClient;
   } catch (error) {
@@ -250,10 +259,14 @@ export async function executeRedditRequest<T>(requestFn: (client: Snoowrap) => P
   let retryCount = 0;
   const maxRetries = 3;
   
+  // Luôn xoay vòng tài khoản cho mỗi request mới
+  // Reset client để buộc tạo mới và lấy tài khoản tiếp theo
+  currentClient = null;
+  
   while (retryCount <= maxRetries) {
     try {
-      // Lấy client mới cho mỗi lần request, với thông tin tài khoản hiện tại
-      const client = await getRedditClient();
+      // Force lấy client mới với tài khoản mới cho mỗi lần request
+      const client = await getRedditClient(true);
       
       // Lấy thông tin tài khoản và proxy đang sử dụng để log
       const accountInfo = `${currentUsername || 'unknown'}${currentProxyHost ? ` with proxy ${currentProxyHost}:${currentProxyPort}` : ''}`;
@@ -265,6 +278,9 @@ export async function executeRedditRequest<T>(requestFn: (client: Snoowrap) => P
       // Ghi nhận thành công
       await recordSuccess();
       console.log(`[Success] Account ${accountInfo} completed request successfully`);
+      
+      // Force sử dụng tài khoản khác cho request tiếp theo
+      currentClient = null;
       
       // Force typecasting to break circular reference
       return result as unknown as T;
@@ -280,6 +296,9 @@ export async function executeRedditRequest<T>(requestFn: (client: Snoowrap) => P
       // Xử lý lỗi và tiếp tục vòng lặp với client mới
       console.log(`[Rotating] Switching to next account due to error`);
       await handleRateLimitError(error);
+      
+      // Reset client để buộc lấy tài khoản mới
+      currentClient = null;
       
       // Chờ thêm thời gian trước khi thử lại
       const backoffTime = retryCount * 2000; // 2s, 4s, 6s
