@@ -96,12 +96,24 @@ export class DynamicCrawlerManager {
             // Xác định tên subreddit thật từ tên cấu hình
             let actualSubreddit = config.subreddit;
             
-            // Nếu tên cấu hình theo mẫu <subreddit>-YYYYMMDD-HH, thì lấy phần đầu
-            const configPattern = /^([a-zA-Z0-9_]+)-\d{8}-\d{2}$/;
-            const match = config.subreddit.match(configPattern);
+            // Mẫu cho tên subreddit với timestamp (bitcoin-20250328-23)
+            const timestampPattern = /^([a-zA-Z0-9_]+)-\d{8}-\d{2}$/;
+            
+            // Mẫu cho tên subreddit với label (bitcoin-30days, bitcoin-history)
+            const labelPattern = /^([a-zA-Z0-9_]+)-([\w-]+)$/;
+            
+            // Kiểm tra mẫu timestamp trước
+            let match = config.subreddit.match(timestampPattern);
             if (match && match[1]) {
               actualSubreddit = match[1];
-              console.log(`Using actual subreddit name ${actualSubreddit} for config ${config.subreddit}`);
+              console.log(`Using actual subreddit name ${actualSubreddit} for config ${config.subreddit} (timestamp pattern)`);
+            } else {
+              // Nếu không phải timestamp pattern, kiểm tra label pattern
+              match = config.subreddit.match(labelPattern);
+              if (match && match[1]) {
+                actualSubreddit = match[1];
+                console.log(`Using actual subreddit name ${actualSubreddit} for config ${config.subreddit} (label pattern)`);
+              }
             }
             
             crawlScheduler.addCrawlTask(
