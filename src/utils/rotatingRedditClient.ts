@@ -99,14 +99,14 @@ export async function getRedditClient(): Promise<Snoowrap> {
     
     // Cấu hình client
     currentClient.config({
-      requestDelay: 1000,          // 1 giây giữa các requests
+      requestDelay: 2000,          // 2 giây giữa các requests để giảm khả năng bị rate limit
       continueAfterRatelimitError: false,
       retryErrorCodes: [502, 503, 504, 500],
       maxRetryAttempts: 3,
       debug: false
     });
     
-    console.log(`Using Reddit account: ${account.username}${currentProxyHost ? ` with proxy ${currentProxyHost}:${currentProxyPort}` : ''}`);
+    console.log(`Using Reddit account: ${account.username}${currentProxyHost ? ` with proxy ${currentProxyHost}:${currentProxyPort}` : ''} [${account.dailyUsageCount}/${account.successCount + account.failCount} requests]`);
     
     return currentClient;
   } catch (error) {
@@ -252,9 +252,20 @@ export async function executeRedditRequest<T>(requestFn: (client: Snoowrap) => P
   
   while (retryCount <= maxRetries) {
     try {
+      // Lấy client mới cho mỗi lần request, với thông tin tài khoản hiện tại
       const client = await getRedditClient();
+      
+      // Lấy thông tin tài khoản và proxy đang sử dụng để log
+      const accountInfo = `${currentUsername || 'unknown'}${currentProxyHost ? ` with proxy ${currentProxyHost}:${currentProxyPort}` : ''}`;
+      console.log(`[Request] Using account ${accountInfo} (attempt ${retryCount + 1}/${maxRetries + 1})`);
+      
+      // Thực hiện request
       const result = await requestFn(client);
+      
+      // Ghi nhận thành công
       await recordSuccess();
+      console.log(`[Success] Account ${accountInfo} completed request successfully`);
+      
       // Force typecasting to break circular reference
       return result as unknown as T;
     } catch (error: any) {
@@ -267,7 +278,13 @@ export async function executeRedditRequest<T>(requestFn: (client: Snoowrap) => P
       }
       
       // Xử lý lỗi và tiếp tục vòng lặp với client mới
+      console.log(`[Rotating] Switching to next account due to error`);
       await handleRateLimitError(error);
+      
+      // Chờ thêm thời gian trước khi thử lại
+      const backoffTime = retryCount * 2000; // 2s, 4s, 6s
+      console.log(`Waiting ${backoffTime}ms before retry...`);
+      await new Promise(resolve => setTimeout(resolve, backoffTime));
     }
   }
   

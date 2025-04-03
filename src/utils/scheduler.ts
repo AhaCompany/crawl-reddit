@@ -1,6 +1,8 @@
 import cron from 'node-cron';
 import { crawlSubredditPosts } from '../api/postCrawler';
 import { config } from '../config/config';
+import { Pool } from 'pg';
+import { getCrawlerManager } from './dynamicCrawlers';
 
 /**
  * Thông tin của một task crawl đang chạy
@@ -25,6 +27,22 @@ interface CrawlTask {
 class CrawlScheduler {
   private tasks: Map<string, CrawlTask> = new Map();
   private isRunning: boolean = false;
+  private pool: Pool;
+  private onceTaskQueue: string[] = []; // Hàng đợi cho các task @once
+  private isProcessingQueue: boolean = false;
+  private maxConcurrentOnceTasks: number = 2; // Giới hạn số task @once chạy song song
+  private currentRunningOnceTasks: number = 0;
+  
+  constructor() {
+    // Khởi tạo pool connection cho PostgreSQL
+    this.pool = new Pool({
+      host: config.postgresql.host,
+      port: config.postgresql.port,
+      database: config.postgresql.database,
+      user: config.postgresql.user,
+      password: config.postgresql.password,
+    });
+  }
   
   /**
    * Thêm một task crawl mới
@@ -124,8 +142,8 @@ class CrawlScheduler {
         // Gọi start gốc
         originalStart.call(this);
         
-        // Thực thi hàm crawl ngay lập tức thay vì đợi cron kích hoạt
-        console.log(`[${new Date().toISOString()}] Running one-time crawl for r/${subreddit}`);
+        // Thêm task vào hàng đợi thay vì thực thi ngay lập tức
+        console.log(`[${new Date().toISOString()}] Adding one-time crawl for r/${subreddit} to queue`);
         
         // Kiểm tra xem đã chạy chưa
         const taskInfo = scheduler.tasks.get(taskId);
@@ -134,33 +152,71 @@ class CrawlScheduler {
           return;
         }
         
-        // Thực hiện crawl sau 100ms để đảm bảo mọi khởi tạo đã hoàn tất
-        setTimeout(async () => {
-          try {
-            // Gọi crawl function
-            await crawlFunction();
-            
-            // Đánh dấu đã hoàn thành
-            console.log(`One-time crawl for r/${subreddit} completed - auto-disabling config`);
-            
-            const task = scheduler.tasks.get(taskId);
-            if (task) {
-              task.isOneTimeCompleted = true;
-              task.lastRun = new Date();
-              task.runCount++;
-            }
-            
-            // Chỗ này có thể thêm code để tự vô hiệu hóa cấu hình trong DB
-            // TODO: Implement auto-disable in database
-          } catch (error) {
-            console.error(`Error in one-time crawl for ${subreddit}:`, error);
-            
-            const task = scheduler.tasks.get(taskId);
-            if (task) {
-              task.errors++;
-            }
+        // Thêm vào hàng đợi và xử lý
+        scheduler.onceTaskQueue.push(taskId);
+        scheduler.processOnceTaskQueue();
+      };
+      
+      // Thêm phương thức thực thi task cho task @once này
+      (task as any).executeOnceTask = async function() {
+        console.log(`[${new Date().toISOString()}] Running one-time crawl for r/${subreddit} from queue`);
+        
+        try {
+          // Đánh dấu đang chạy
+          scheduler.currentRunningOnceTasks++;
+          
+          // Gọi crawl function
+          await crawlFunction();
+          
+          // Đánh dấu đã hoàn thành
+          console.log(`One-time crawl for r/${subreddit} completed - auto-disabling config`);
+          
+          const task = scheduler.tasks.get(taskId);
+          if (task) {
+            task.isOneTimeCompleted = true;
+            task.lastRun = new Date();
+            task.runCount++;
           }
-        }, 100);
+          
+          // Vô hiệu hóa cấu hình trong DB
+          try {
+            // Xác định tên subreddit thực từ cấu hình
+            let configName = subreddit;
+            
+            // Nếu đây là task được tạo từ tên cấu hình (@once từ database)
+            // thì cần sử dụng tên đầy đủ để vô hiệu hóa đúng cấu hình
+            if (taskId.startsWith('dynamic-')) {
+              configName = taskId.replace('dynamic-', '');
+            }
+            
+            // Sử dụng crawler manager để vô hiệu hóa
+            const crawlerManager = getCrawlerManager();
+            const result = await crawlerManager.disableCrawler(configName);
+            
+            if (result) {
+              console.log(`Successfully disabled configuration for ${configName} in database`);
+            } else {
+              console.error(`Failed to disable configuration for ${configName} in database`);
+            }
+          } catch (error) {
+            console.error(`Error disabling configuration in database:`, error);
+          }
+        } catch (error) {
+          console.error(`Error in one-time crawl for ${subreddit}:`, error);
+          
+          const task = scheduler.tasks.get(taskId);
+          if (task) {
+            task.errors++;
+          }
+        } finally {
+          // Đánh dấu đã chạy xong, giảm số lượng task đang chạy
+          scheduler.currentRunningOnceTasks--;
+          
+          // Xử lý queue tiếp
+          setTimeout(() => {
+            scheduler.processOnceTaskQueue();
+          }, 1000); // Chờ 1 giây trước khi xử lý task tiếp theo
+        }
       };
       
       task = task;
@@ -329,6 +385,71 @@ class CrawlScheduler {
    */
   public isSchedulerRunning(): boolean {
     return this.isRunning;
+  }
+  
+  /**
+   * Xử lý hàng đợi các task @once
+   */
+  private async processOnceTaskQueue(): Promise<void> {
+    // Nếu đang xử lý queue rồi thì không làm gì
+    if (this.isProcessingQueue) {
+      return;
+    }
+    
+    this.isProcessingQueue = true;
+    
+    try {
+      // Kiểm tra xem có còn task trong queue và số lượng task đang chạy < max không
+      while (this.onceTaskQueue.length > 0 && this.currentRunningOnceTasks < this.maxConcurrentOnceTasks) {
+        // Lấy task ID từ đầu queue
+        const taskId = this.onceTaskQueue.shift();
+        
+        if (!taskId) {
+          continue;
+        }
+        
+        // Lấy thông tin task
+        const taskInfo = this.tasks.get(taskId);
+        
+        if (!taskInfo) {
+          console.error(`Task ${taskId} not found in task map`);
+          continue;
+        }
+        
+        // Kiểm tra nếu task đã hoàn thành thì bỏ qua
+        if (taskInfo.isOneTimeCompleted) {
+          console.log(`Task ${taskId} already completed, skipping`);
+          continue;
+        }
+        
+        // Thực thi task
+        console.log(`Executing task ${taskId} from queue. Remaining in queue: ${this.onceTaskQueue.length}`);
+        
+        // Gọi phương thức thực thi task
+        (taskInfo.task as any).executeOnceTask();
+      }
+    } catch (error) {
+      console.error('Error processing once task queue:', error);
+    } finally {
+      this.isProcessingQueue = false;
+      
+      // Nếu còn task trong queue và số lượng task đang chạy < max, tiếp tục xử lý
+      if (this.onceTaskQueue.length > 0 && this.currentRunningOnceTasks < this.maxConcurrentOnceTasks) {
+        setTimeout(() => {
+          this.processOnceTaskQueue();
+        }, 1000);
+      }
+    }
+  }
+  
+  /**
+   * Đóng kết nối database khi cần thiết
+   */
+  public async close(): Promise<void> {
+    if (this.pool) {
+      await this.pool.end();
+      console.log('Database connection pool closed');
+    }
   }
 }
 
