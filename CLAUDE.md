@@ -1,46 +1,31 @@
-# Claude's Notes for Reddit Crawler Project
+# CLAUDE.md
 
-## Build Commands
-- Build the project: `npm run build`
-- Run the application: `npm start`
-- Start development mode: `npm run dev`
-- Run continuous crawling: `npm run continuous-crawl`
-- Run dynamic crawling: `npm run dynamic-crawl`
-- Manage config: `npm run config`
-- Apply database migrations: `npm run migrate`
-- Manage proxy settings: `npm run proxy`
-- Manage Reddit accounts: `npm run accounts`
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-## Feature Status
+## Build & Run Commands
+- Build: `npm run build`
+- Run application: `npm start`
+- Development mode: `npm run dev`
+- Lint code: `npm run lint`
+- Apply migrations: `npm run migrate`
+- Continuous crawling: `npm run continuous-crawl`
+- Dynamic crawling: `npm run dynamic-crawl`
+- Database connection test: `npm run test-db`
+- Debug mode: `npm run debug-crawl`
 
-### Account and Proxy Rotation
-- Account Rotation: ✅ Implemented, ready for testing
-- Proxy Rotation: ✅ Implemented, ready for testing
-- Integration with Proxy: ✅ Implemented, ready for testing
-- Database migrations: ✅ Implemented, ready to run
-
-### Time-based Crawling
-- Time range columns in database: ✅ Migration created, needs to be applied
-- Configuration UI: ✅ Implemented in configTool
-- Scheduling logic: ✅ Implemented in dynamicCrawl
+## Code Style Guidelines
+- **Typing**: Use strict TypeScript typing (tsconfig.json has `strict: true`)
+- **Error Handling**: Catch all errors with proper logging, provide fallbacks where appropriate
+- **File Organization**: Split code by functionality (APIs, models, storage, utils)
+- **Imports**: Group imports by external packages first, then internal modules
+- **Naming**: 
+  - Use camelCase for variables, functions, methods
+  - Use PascalCase for classes and interfaces
+  - Use descriptive names that indicate purpose
+- **Comments**: Add JSDoc-style comments for functions explaining parameters and return values
+- **Proxy/Account Handling**: Always use executeRedditRequest pattern to handle rate limits and rotation
 
 ## Troubleshooting Notes
-
-### TypeScript build errors
-- We fixed the TS1062 error in rotatingRedditClient.ts related to circular type references
-- This was solved by:
-  1. Using executeRedditRequest to handle recursive calls
-  2. Adding type casting (`as unknown as T`) to break the circular reference
-  3. Using `async` functions with explicit return types
-
-### PostgreSQL
-- Always remember to run migrations after schema changes: `npm run migrate`
-- The crawl_configs table has been updated with start_time and end_time columns
-- A new proxy_servers table has been created
-
-## Testing Plan
-1. Run migrations: `npm run migrate`
-2. Add Reddit accounts: `npm run accounts`
-3. Add proxy servers: `npm run proxy`
-4. Configure crawling schedules: `npm run config`
-5. Test account rotation: `npm run continuous-crawl`
+- TypeScript circular references: Use `as unknown as T` casting when needed
+- PostgreSQL errors: Check connection, fallback to JSON if database unavailable
+- Rate limits: Proxy and account rotation are implemented to handle Reddit API limits
