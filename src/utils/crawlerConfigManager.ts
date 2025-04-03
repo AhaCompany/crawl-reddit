@@ -38,6 +38,8 @@ export class CrawlerConfigManager {
           is_active,
           start_time,
           end_time,
+          use_pagination,
+          max_pages,
           created_at,
           updated_at
         FROM 
@@ -57,7 +59,7 @@ export class CrawlerConfigManager {
         console.log('-'.repeat(120));
         
         // In header
-        console.log('ID | Subreddit | Interval | Limit | Sort By | Time Range | Active | Start Time | End Time | Created At | Updated At');
+        console.log('ID | Subreddit | Interval | Limit | Sort By | Time Range | Active | Pagination | Max Pages | Start Time | End Time | Created At | Updated At');
         console.log('-'.repeat(120));
         
         // In dữ liệu
@@ -70,6 +72,8 @@ export class CrawlerConfigManager {
             `${row.sort_by} | ` +
             `${row.time_range} | ` +
             `${row.is_active ? 'Yes' : 'No'} | ` +
+            `${row.use_pagination ? 'Yes' : 'No'} | ` +
+            `${row.max_pages} | ` +
             `${row.start_time ? new Date(row.start_time).toISOString().split('T')[0] : 'N/A'} | ` +
             `${row.end_time ? new Date(row.end_time).toISOString().split('T')[0] : 'N/A'} | ` +
             `${row.created_at.toISOString().split('T')[0]} | ` +
@@ -94,7 +98,9 @@ export class CrawlerConfigManager {
     sortBy: string,
     timeRange: string,
     startTime: string | null = null,
-    endTime: string | null = null
+    endTime: string | null = null,
+    usePagination: boolean = false,
+    maxPages: number = 1
   ): Promise<void> {
     try {
       // Validation
@@ -161,7 +167,9 @@ export class CrawlerConfigManager {
         sortBy as any,
         timeRange as any,
         parsedStartTime,
-        parsedEndTime
+        parsedEndTime,
+        usePagination,
+        maxPages
       );
       
       if (result) {

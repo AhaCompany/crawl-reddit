@@ -17,6 +17,8 @@ interface CrawlerConfig {
   is_active: boolean;
   start_time: Date | null; // Thời gian bắt đầu crawl
   end_time: Date | null;   // Thời gian kết thúc crawl
+  use_pagination: boolean; // Sử dụng phân trang khi crawl
+  max_pages: number;       // Số trang tối đa khi use_pagination=true
 }
 
 // Class quản lý dynamic crawlers
@@ -53,7 +55,8 @@ export class DynamicCrawlerManager {
       const now = Date.now();
       if (this.configsCache.length === 0 || now - this.lastConfigCheck > this.CHECK_INTERVAL) {
         const result = await this.pool.query(`
-          SELECT id, subreddit, crawl_interval, post_limit, sort_by, time_range, is_active, start_time, end_time
+          SELECT id, subreddit, crawl_interval, post_limit, sort_by, time_range, is_active, 
+                 start_time, end_time, use_pagination, max_pages
           FROM crawl_configs
           ORDER BY id
         `);
@@ -270,13 +273,15 @@ module.exports = {
     sortBy: 'hot' | 'new' | 'top' | 'rising' = 'new',
     timeRange: 'hour' | 'day' | 'week' | 'month' | 'year' | 'all' = 'day',
     startTime: Date | null = null,
-    endTime: Date | null = null
+    endTime: Date | null = null,
+    usePagination: boolean = false,
+    maxPages: number = 1
   ): Promise<boolean> {
     try {
       await this.pool.query(`
         INSERT INTO crawl_configs 
-        (subreddit, crawl_interval, post_limit, sort_by, time_range, start_time, end_time) 
-        VALUES ($1, $2, $3, $4, $5, $6, $7)
+        (subreddit, crawl_interval, post_limit, sort_by, time_range, start_time, end_time, use_pagination, max_pages) 
+        VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
         ON CONFLICT (subreddit) DO UPDATE SET
           crawl_interval = $2,
           post_limit = $3,
@@ -284,9 +289,11 @@ module.exports = {
           time_range = $5,
           start_time = $6,
           end_time = $7,
+          use_pagination = $8,
+          max_pages = $9,
           is_active = TRUE,
           updated_at = NOW()
-      `, [subreddit, crawlInterval, postLimit, sortBy, timeRange, startTime, endTime]);
+      `, [subreddit, crawlInterval, postLimit, sortBy, timeRange, startTime, endTime, usePagination, maxPages]);
 
       // Reset cache to force reload
       this.lastConfigCheck = 0;
