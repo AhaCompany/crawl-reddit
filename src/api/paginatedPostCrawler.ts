@@ -24,6 +24,12 @@ export const crawlSubredditPostsWithPagination = async (
   startTimestamp: number | null = null,
   endTimestamp: number | null = null
 ): Promise<void> => {
+  // Kiểm tra cấu hình storage trước khi bắt đầu
+  console.log(`[Storage Config] Current storage type: ${config.app.storage}`);
+  if (config.app.storage === 'json') {
+    console.log('WARNING: Currently configured to store only JSON files. Posts will not be saved to database.');
+    console.log('Set STORAGE_TYPE environment variable to postgresql, sqlite, postgresql_miner, both, or both_miner to enable database storage.');
+  }
   try {
     console.log(`Crawling r/${subreddit} with pagination (${limit} posts per page, max ${maxPages} pages)`);
     console.log(`Sort: ${sortBy}, Time range: ${timeRange}`);
@@ -106,16 +112,34 @@ export const crawlSubredditPostsWithPagination = async (
       // Process and format the posts
       const formattedPagePosts: RedditPost[] = [];
       for (const post of pagePosts) {
-        // Check time limits if specified
+        // Check time limits if specified - debug info
+        // Kiểm tra format thời gian - Reddit sử dụng UNIX timestamp
+        // Một số posts có thể có created_utc sai định dạng
+        let postDate;
+        if (post.created_utc && post.created_utc > 1000000000) { // Kiểm tra timestamp hợp lệ (sau năm 2001)
+          postDate = new Date(post.created_utc * 1000);
+        } else {
+          // Sửa timestamp nếu cần 
+          console.log(`WARNING: Invalid timestamp for post ${post.id}: ${post.created_utc}`);
+          postDate = new Date();
+          post.created_utc = Math.floor(Date.now() / 1000);
+        }
+        
+        // Log post time for debugging
+        console.log(`Post ${post.id} time: ${postDate.toISOString()}, UTC timestamp: ${post.created_utc}`);
+        
+        // Check if post is too old (before start time)
         if (startTimestamp && post.created_utc < startTimestamp) {
-          console.log(`Reached start time limit at post ${post.id} (${new Date(post.created_utc * 1000).toISOString()})`);
+          console.log(`Reached start time limit at post ${post.id} (${postDate.toISOString()})`);
           reachedTimeLimit = true;
           break;
         }
         
+        // Check if post is too new (after end time)
         if (endTimestamp && post.created_utc > endTimestamp) {
-          console.log(`Reached end time limit at post ${post.id} (${new Date(post.created_utc * 1000).toISOString()})`);
-          continue; // Skip this post but continue with others that might be in range
+          console.log(`Post ${post.id} is newer than end_time (${postDate.toISOString()})`);
+          // Include the post anyway, don't skip
+          // continue; // Commented out to include all posts
         }
         
         // Format post
