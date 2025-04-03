@@ -136,9 +136,23 @@ async function createConfigsDirectly() {
         // Với cấu hình hiện tại/tương lai: cronExpression bình thường
         const finalCron = isPastConfig ? "@once" : cronExpression;
         
+        // Tạo một đối tượng config để thêm vào database
+        const configInfo = {
+          // Tên cấu hình (id duy nhất)
+          configName: configName,
+          // Tên subreddit thực tế (không thêm ngày và giờ)
+          actualSubreddit: SUBREDDIT,
+          // Thời gian crawl
+          timePeriod: {
+            start: startHour,
+            end: endHour,
+            formatted: `${dayFormatted} ${hour}:00 - ${hour}:59`
+          }
+        };
+        
         // Thêm vào danh sách configs để insert
         configs.push([
-          configName,                  // subreddit
+          configName,                  // config name (ID) - được dùng để phân biệt các cấu hình
           finalCron,                   // crawl_interval - "@once" để chạy một lần với dữ liệu quá khứ
           POST_LIMIT,                  // post_limit
           'new',                       // sort_by

@@ -90,9 +90,20 @@ export class DynamicCrawlerManager {
             console.log(`Setting up crawler for r/${config.subreddit} - Interval: ${config.crawl_interval} (${cronExpression})`);
             
             // Thêm vào scheduler
+            // Xác định tên subreddit thật từ tên cấu hình
+            let actualSubreddit = config.subreddit;
+            
+            // Nếu tên cấu hình theo mẫu <subreddit>-YYYYMMDD-HH, thì lấy phần đầu
+            const configPattern = /^([a-zA-Z0-9_]+)-\d{8}-\d{2}$/;
+            const match = config.subreddit.match(configPattern);
+            if (match && match[1]) {
+              actualSubreddit = match[1];
+              console.log(`Using actual subreddit name ${actualSubreddit} for config ${config.subreddit}`);
+            }
+            
             crawlScheduler.addCrawlTask(
               taskId,
-              config.subreddit,
+              actualSubreddit, // Sử dụng tên subreddit thực tế
               cronExpression,
               config.post_limit,
               config.sort_by as any,
