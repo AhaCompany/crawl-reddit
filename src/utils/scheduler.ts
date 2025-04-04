@@ -1,5 +1,6 @@
 import cron from 'node-cron';
 import { crawlSubredditPosts } from '../api/postCrawler';
+import { efficientCrawlSubreddit } from './efficientCrawler';
 import { config } from '../config/config';
 import { Pool } from 'pg';
 import { getCrawlerManager } from './dynamicCrawlers';
@@ -84,8 +85,8 @@ class CrawlScheduler {
           task.lastRun = new Date();
           task.runCount++;
           
-          // Thực hiện crawl
-          await crawlSubredditPosts(subreddit, limit, sortBy, timeRange, isVerbose);
+          // Thực hiện crawl với phương pháp hiệu quả
+          await efficientCrawlSubreddit(subreddit, limit, sortBy, timeRange);
         }
       } catch (error) {
         console.error(`Error in scheduled crawl task ${taskId}:`, error);
@@ -165,8 +166,13 @@ class CrawlScheduler {
           // Đánh dấu đang chạy
           scheduler.currentRunningOnceTasks++;
           
-          // Gọi crawl function
-          await crawlFunction();
+          // Gọi crawl function (sử dụng hàm hiệu quả trực tiếp thay vì gọi crawlFunction)
+          await efficientCrawlSubreddit(
+            task.subreddit,
+            task.limit,
+            task.sortBy,
+            task.timeRange
+          );
           
           // Đánh dấu đã hoàn thành
           console.log(`One-time crawl for r/${subreddit} completed - auto-disabling config`);
@@ -332,12 +338,11 @@ class CrawlScheduler {
       try {
         task.lastRun = new Date();
         task.runCount++;
-        await crawlSubredditPosts(
+        await efficientCrawlSubreddit(
           task.subreddit,
           task.limit,
           task.sortBy,
-          task.timeRange,
-          task.isVerbose
+          task.timeRange
         );
         return true;
       } catch (error) {
