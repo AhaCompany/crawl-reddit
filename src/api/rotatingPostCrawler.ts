@@ -8,6 +8,7 @@ import { RedditPost } from '../models/Post';
 import { RedditComment } from '../models/Comment';
 import { saveToJson } from '../utils/fileHelper';
 import { storePosts, storeComments } from '../storage/storageFacade';
+import { crawlAndTrackMultiplePosts } from '../utils/immediateCommentTracker';
 
 /**
  * Crawl bài viết từ subreddit và lưu vào storage
@@ -150,7 +151,13 @@ export const crawlSubredditPosts = async (
     const filePath = path.join(outputDir, `${sortBy}_${timeRange}_${new Date().toISOString().split('T')[0]}.json`);
     await storePosts(subreddit, formattedPosts, filePath);
     
-    console.log(`Crawled ${formattedPosts.length} posts from r/${subreddit}`);
+    // Thêm bước: Crawl comments và track bài viết ngay lập tức
+    console.log(`Crawled ${formattedPosts.length} posts from r/${subreddit}, now tracking comments...`);
+    
+    // Gọi hàm track và crawl comments
+    await crawlAndTrackMultiplePosts(formattedPosts, 7); // Theo dõi trong 7 ngày
+    
+    console.log(`Crawled ${formattedPosts.length} posts and set up comment tracking for r/${subreddit}`);
   } catch (error) {
     console.error(`Error crawling posts from r/${subreddit}:`, error);
   }
