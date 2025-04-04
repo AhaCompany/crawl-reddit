@@ -166,12 +166,12 @@ class CrawlScheduler {
           // Đánh dấu đang chạy
           scheduler.currentRunningOnceTasks++;
           
-          // Gọi crawl function (sử dụng hàm hiệu quả trực tiếp thay vì gọi crawlFunction)
+          // Gọi crawl function (sử dụng hàm hiệu quả trực tiếp)
           await efficientCrawlSubreddit(
-            task.subreddit,
-            task.limit,
-            task.sortBy,
-            task.timeRange
+            subreddit,
+            limit,
+            sortBy,
+            timeRange
           );
           
           // Đánh dấu đã hoàn thành
