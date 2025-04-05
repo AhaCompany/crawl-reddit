@@ -398,6 +398,27 @@ export class RedditAccountManager {
   }
   
   /**
+   * Lấy thông tin tài khoản hiện tại đang được sử dụng
+   * Chú ý: Đây là phương thức mới thêm vào để hiển thị thông tin cho việc debugging
+   */
+  public async getCurrentAccount(): Promise<RedditAccount | null> {
+    if (!this.isInitialized) {
+      await this.initialize();
+    }
+    
+    if (this.accounts.length === 0) {
+      return null;
+    }
+    
+    // Lấy tài khoản đã sử dụng gần đây nhất (dựa trên lastUsed)
+    const sortedAccounts = [...this.accounts].sort((a, b) => 
+      b.lastUsed.getTime() - a.lastUsed.getTime()
+    );
+    
+    return sortedAccounts[0];
+  }
+
+  /**
    * Đóng kết nối
    */
   public async close(): Promise<void> {

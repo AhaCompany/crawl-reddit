@@ -5,6 +5,56 @@ import path from 'path';
 import { saveToJson } from '../utils/fileHelper';
 import { storePosts, storeComments } from '../storage/storageFacade';
 import { executeRedditRequest, getSubreddit, getSubmission } from '../utils/rotatingRedditClient';
+import { Pool } from 'pg';
+
+// Pool connection cho PostgreSQL - chỉ dùng để check bài đã tồn tại
+const pool = new Pool({
+  host: config.postgresql.host,
+  port: config.postgresql.port,
+  database: config.postgresql.database,
+  user: config.postgresql.user,
+  password: config.postgresql.password,
+});
+
+/**
+ * Kiểm tra bài viết đã tồn tại trong database chưa
+ * @param subreddit Tên subreddit
+ * @param postIds Mảng ID bài viết cần kiểm tra
+ * @returns Set các ID bài viết đã tồn tại
+ */
+async function checkExistingPosts(subreddit: string, postIds: string[]): Promise<Set<string>> {
+  if (!postIds.length) return new Set<string>();
+  
+  try {
+    // Tạo câu query với LIKE điều kiện cho mỗi ID bài viết
+    const likeConditions = postIds.map((_, index) => `uri LIKE $${index + 2}`).join(' OR ');
+    const params = [subreddit, ...postIds.map(id => `%/comments/${id}/%`)];
+    
+    // Tìm các ID đã tồn tại trong database
+    const query = `
+      SELECT uri FROM dataentity
+      WHERE label = $1
+      AND (${likeConditions})
+    `;
+    
+    const result = await pool.query(query, params);
+    
+    // Tách ID bài viết từ URI
+    const existingIds = new Set<string>();
+    for (const row of result.rows) {
+      // URI dạng: https://www.reddit.com/r/bitcoin/comments/POST_ID/post_title
+      const match = row.uri.match(/\/comments\/([^\/]+)/);
+      if (match && match[1]) {
+        existingIds.add(match[1]);
+      }
+    }
+    
+    return existingIds;
+  } catch (error) {
+    console.error(`Error checking existing posts for r/${subreddit}:`, error);
+    return new Set<string>();
+  }
+}
 
 /**
  * Crawl posts from a subreddit and save them to JSON
@@ -18,7 +68,8 @@ export const crawlSubredditPosts = async (
   limit: number = 25,
   sortBy: 'hot' | 'new' | 'top' | 'rising' = 'hot',
   timeRange: 'hour' | 'day' | 'week' | 'month' | 'year' | 'all' = 'all',
-  verbose: boolean = true // Thêm tham số verbose để kiểm soát việc lấy chi tiết
+  verbose: boolean = true, // Thêm tham số verbose để kiểm soát việc lấy chi tiết
+  skipExistingPosts: boolean = true // Thêm tham số để kiểm soát việc bỏ qua bài đã tồn tại
 ): Promise<void> => {
   try {
     console.log(`Crawling ${limit} ${sortBy} posts from r/${subreddit}...`);
@@ -67,6 +118,10 @@ export const crawlSubredditPosts = async (
       // Sử dụng map tuần tự thay vì Promise.all để tránh quá nhiều requests cùng lúc
       const detailedPosts = [];
       const outputDir = path.join(config.app.outputDir, subreddit);
+      
+      // Kiểm tra bài viết đã tồn tại trong database chưa để tránh fetch lại
+      const existingPostIds = await checkExistingPosts(subreddit, postIds);
+      console.log(`Found ${existingPostIds.size} posts already exist in database`);
       
       // Tạo một hàm để lưu trữ một bài post riêng lẻ
       const saveIndividualPost = async (post: any) => {
@@ -127,7 +182,19 @@ export const crawlSubredditPosts = async (
         }
       };
       
-      for (const postId of postIds) {
+      // Tách bài viết mới và bài đã tồn tại
+      const newPostIds = postIds.filter(id => !existingPostIds.has(id));
+      const existingPostsData = posts.filter(post => existingPostIds.has(post.id));
+      
+      console.log(`Will fetch details for ${newPostIds.length} new posts (skipping ${existingPostIds.size} existing posts)`);
+      
+      // Thêm bài đã tồn tại trước (không fetch lại)
+      for (const post of existingPostsData) {
+        detailedPosts.push(post);
+      }
+      
+      // Chỉ fetch chi tiết cho các bài mới
+      for (const postId of newPostIds) {
         try {
           console.log(`Fetching details for post ${postId}...`);
           
@@ -254,6 +321,13 @@ export const crawlSubredditPosts = async (
     console.error(`Error crawling posts from r/${subreddit}:`, error);
   }
 };
+
+// Đóng kết nối pool khi ứng dụng kết thúc
+process.on('SIGINT', async () => {
+  console.log('Closing PostgreSQL connections...');
+  await pool.end();
+  process.exit(0);
+});
 
 /**
  * Crawl comments from a specific post

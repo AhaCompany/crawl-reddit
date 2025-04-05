@@ -272,6 +272,13 @@ export async function executeRedditRequest<T>(requestFn: (client: Snoowrap) => P
       const accountInfo = `${currentUsername || 'unknown'}${currentProxyHost ? ` with proxy ${currentProxyHost}:${currentProxyPort}` : ''}`;
       console.log(`[Request] Using account ${accountInfo} (attempt ${retryCount + 1}/${maxRetries + 1})`);
       
+      // In thêm thông tin chi tiết về tài khoản
+      const accountManager = await getAccountManager();
+      const account = await accountManager.getCurrentAccount();
+      if (account) {
+        console.log(`[Detail] Account stats: ${account.username} | Usage: ${account.dailyUsageCount}/${account.successCount + account.failCount} requests | Success: ${account.successCount} | Failures: ${account.failCount}`);
+      }
+      
       // Thực hiện request
       const result = await requestFn(client);
       

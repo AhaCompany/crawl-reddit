@@ -179,6 +179,7 @@ export class CommentTracker {
 
   /**
    * Crawl comments mới cho một bài viết
+   * Sử dụng cơ chế xoay vòng tài khoản để tránh rate limit
    */
   public async crawlNewComments(postTracking: PostTracking): Promise<number> {
     if (!this.isInitialized) {
@@ -191,96 +192,127 @@ export class CommentTracker {
       // Lấy comment mới nhất đã quét của bài viết
       const lastCommentId = postTracking.last_comment_id;
       
-      // URL API để lấy comments
-      let url = `https://www.reddit.com/comments/${postTracking.post_id}.json?raw_json=1&limit=100`;
-      
-      // Nếu đã có comment ID cuối cùng, chỉ lấy comments mới hơn
-      // Lưu ý: Reddit API không hỗ trợ tham số "after" cho comments,
-      // nên chúng ta cần lấy tất cả và lọc ở phía client
-      
-      // Headers để tránh bị chặn
-      const headers = {
-        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-        'Accept': 'application/json',
-        'Accept-Language': 'en-US,en;q=0.9'
-      };
-      
-      console.log(`Calling Reddit API: ${url}`);
-      
-      // Gọi API với timeout dài hơn
-      const response = await axios.get(url, { 
-        headers,
-        timeout: 30000 // 30 giây
-      });
-      
-      if (!Array.isArray(response.data) || response.data.length < 2) {
-        console.log('Invalid response format from Reddit API');
-        return 0;
+      // Import cần thiết cho rotating client
+      // Bọc trong try-catch vì import động có thể gây lỗi
+      let executeRedditRequest: any;
+      let getAccountManager: any;
+      try {
+        // Import động để tránh circular dependency
+        const rotatingClient = await import('../utils/rotatingRedditClient');
+        executeRedditRequest = rotatingClient.executeRedditRequest;
+        getAccountManager = rotatingClient.getAccountManager;
+      } catch (error) {
+        console.error('Error importing rotatingRedditClient:', error);
+        throw new Error('Could not import rotatingRedditClient');
       }
-      
-      // Phần tử đầu tiên là thông tin bài viết
-      const postData = response.data[0].data.children[0].data;
-      const title = postData.title;
-      
-      // Phần tử thứ hai là các comments
-      const commentsData = response.data[1].data.children;
-      
+
       // Mảng lưu trữ các comments đã xử lý
       const allComments: RedditComment[] = [];
       const newComments: RedditComment[] = [];
       let newestCommentId: string | null = lastCommentId;
+      let title: string | null = null;
+
+      // Khởi tạo thông tin tài khoản
+      const currentAccountInfo = { username: '(unknown)' };
       
-      // Hàm đệ quy để xử lý comments
-      const processComment = (comment: any, depth: number = 0): void => {
-        // Bỏ qua các "more" comments
-        if (comment.kind === 't1') {
-          const data: RedditCommentData = comment.data;
-          
-          // Tạo đối tượng RedditComment
-          const formattedComment: RedditComment = {
-            id: data.id,
-            author: data.author || '[deleted]',
-            body: data.body || '',
-            permalink: `https://www.reddit.com${data.permalink}`,
-            created_utc: data.created_utc || 0,
-            score: data.score || 0,
-            subreddit: data.subreddit,
-            is_submitter: !!data.is_submitter,
-            parent_id: data.parent_id || '',
-            depth,
-            replies: []
-          };
-          
-          // Thêm vào danh sách tất cả comments
-          allComments.push(formattedComment);
-          
-          // Xác định xem đây có phải là comment mới hay không
-          // Nếu không có last_comment_id, coi như tất cả là mới
-          if (!lastCommentId || data.id > lastCommentId) {
-            newComments.push(formattedComment);
-            
-            // Cập nhật comment ID mới nhất
-            if (!newestCommentId || data.id > newestCommentId) {
-              newestCommentId = data.id;
-            }
+      // Sử dụng phương thức xoay vòng tài khoản để gọi API
+      await executeRedditRequest(async (client: any) => {
+        // Lấy thông tin tài khoản hiện tại từ client
+        try {
+          // Lấy username từ accountManager
+          const accountManager = await getAccountManager();
+          const currentAccount = await accountManager.getCurrentAccount();
+          if (currentAccount) {
+            currentAccountInfo.username = currentAccount.username;
           }
-          
-          // Xử lý các replies nếu có
-          if (data.replies && data.replies.data && data.replies.data.children) {
-            for (const reply of data.replies.data.children) {
-              processComment(reply, depth + 1);
-            }
-          }
+        } catch (error) {
+          console.warn('Could not get current account info:', error);
         }
-      };
+        
+        // URL API để lấy comments
+        const url = `https://www.reddit.com/comments/${postTracking.post_id}.json?raw_json=1&limit=100`;
+        
+        console.log(`Calling Reddit API for post ${postTracking.post_id} with account: ${currentAccountInfo.username}`);
+        
+        // Gọi API với timeout dài hơn và xoay vòng tài khoản
+        const response = await axios.get(url, { 
+          headers: {
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
+            'Accept': 'application/json',
+            'Accept-Language': 'en-US,en;q=0.9',
+            'Connection': 'keep-alive',
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+          },
+          timeout: 30000 // 30 giây
+        });
+        
+        if (!Array.isArray(response.data) || response.data.length < 2) {
+          console.log('Invalid response format from Reddit API');
+          return true;
+        }
+        
+        // Phần tử đầu tiên là thông tin bài viết
+        const postData = response.data[0].data.children[0].data;
+        title = postData.title;
+        
+        // Phần tử thứ hai là các comments
+        const commentsData = response.data[1].data.children;
+        
+        // Hàm đệ quy để xử lý comments
+        const processComment = (comment: any, depth: number = 0): void => {
+          // Bỏ qua các "more" comments
+          if (comment.kind === 't1') {
+            const data: RedditCommentData = comment.data;
+            
+            // Tạo đối tượng RedditComment
+            const formattedComment: RedditComment = {
+              id: data.id,
+              author: data.author || '[deleted]',
+              body: data.body || '',
+              permalink: `https://www.reddit.com${data.permalink}`,
+              created_utc: data.created_utc || 0,
+              score: data.score || 0,
+              subreddit: data.subreddit,
+              is_submitter: !!data.is_submitter,
+              parent_id: data.parent_id || '',
+              depth,
+              replies: []
+            };
+            
+            // Thêm vào danh sách tất cả comments
+            allComments.push(formattedComment);
+            
+            // Xác định xem đây có phải là comment mới hay không
+            // Nếu không có last_comment_id, coi như tất cả là mới
+            if (!lastCommentId || data.id > lastCommentId) {
+              newComments.push(formattedComment);
+              
+              // Cập nhật comment ID mới nhất
+              if (!newestCommentId || data.id > newestCommentId) {
+                newestCommentId = data.id;
+              }
+            }
+            
+            // Xử lý các replies nếu có
+            if (data.replies && data.replies.data && data.replies.data.children) {
+              for (const reply of data.replies.data.children) {
+                processComment(reply, depth + 1);
+              }
+            }
+          }
+        };
+        
+        // Xử lý tất cả comments ở level cao nhất
+        for (const comment of commentsData) {
+          processComment(comment);
+        }
+        
+        console.log(`Found ${allComments.length} total comments, ${newComments.length} new comments`);
+        return true;
+      });
       
-      // Xử lý tất cả comments ở level cao nhất
-      for (const comment of commentsData) {
-        processComment(comment);
-      }
-      
-      console.log(`Found ${allComments.length} total comments, ${newComments.length} new comments`);
-      
+      // Xử lý sau khi đã lấy dữ liệu thành công
       if (newComments.length > 0) {
         // Lưu comments mới vào PostgreSQL
         await this.saveNewComments(postTracking.post_id, newComments);
@@ -309,6 +341,17 @@ export class CommentTracker {
       return newComments.length;
     } catch (error) {
       console.error(`Error crawling comments for post ${postTracking.post_id}:`, error);
+      
+      // Vẫn cập nhật thời gian quét để tránh quét lại ngay lập tức
+      try {
+        await this.pool.query(
+          `UPDATE post_comment_tracking SET last_crawled_at = NOW() WHERE post_id = $1`,
+          [postTracking.post_id]
+        );
+      } catch (updateError) {
+        console.error(`Error updating last_crawled_at for post ${postTracking.post_id}:`, updateError);
+      }
+      
       return 0;
     }
   }
