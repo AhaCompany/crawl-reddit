@@ -1,0 +1,9 @@
+[
+  {
+    "subreddit": "bitcoin",
+    "interval": "10m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "hour"
+  }
+]

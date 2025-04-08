@@ -18,6 +18,7 @@
     "incremental-comments": "npm run build && node dist/incrementalCommentCrawl.js",
     "auto-track": "npm run build && node dist/autoTrackPosts.js",
     "import-all-posts": "npm run build && node dist/importAllPosts.js",
+    "import-subreddits": "npm run build && node dist/scripts/bulk-import-subreddits.js",
     "proxy": "npm run build && node dist/proxyTool.js",
     "accounts": "npm run build && node dist/accountsManager.js",
     "migrate": "npm run build && node dist/migrationTool.js",

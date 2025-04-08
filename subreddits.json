@@ -1,0 +1,499 @@
+[
+  {
+    "subreddit": "3dprinting",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "ai_engineering",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "ai2025",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "askreddithiking",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "askscience",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "backpacking",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "beer",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "bitcoin",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "bittensor",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "blockchainforscience",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "camping",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "cats",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "charlottefang",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "chelseafc",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "cocktails",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "conservative",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "cooking",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "crypto",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "cryptocurrency",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "cryptomemes",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "cyberark",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "cybersec",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "cybersecurity",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "dataengineering",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "defi",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "desci",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "destiny",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "dtao",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "energy",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "energyefficiency",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "energystorage",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "ethereum",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "france",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "futurology",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "gemini25",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "getoffmylawn",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "government",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "harris",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "hiking",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "homebrewing",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "icehockey",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "iot",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "kindelia",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "liberal",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "llm",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "machinelearning",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "manchesterunited",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "mountaineering",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "nationalparks",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "nature",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "news",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "nft",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "outdoors",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "politics",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "prediction",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "price",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "renewableenergy",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "smartgrid",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "subnet",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "subnet_72",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "subnets",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "tao",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "tesla",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "test",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "trailrunning",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "trump",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "ultralight",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "uselection",
+    "interval": "15m",
+    "limit": 100,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "vgc",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "wilderness",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  },
+  {
+    "subreddit": "wine",
+    "interval": "30m",
+    "limit": 50,
+    "sortBy": "new",
+    "timeRange": "day"
+  }
+]
