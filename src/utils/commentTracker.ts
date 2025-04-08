@@ -229,53 +229,42 @@ export class CommentTracker {
           console.warn('Could not get current account info:', error);
         }
         
-        // URL API để lấy comments
-        const url = `https://www.reddit.com/comments/${postTracking.post_id}.json?raw_json=1&limit=100`;
-        
         console.log(`Calling Reddit API for post ${postTracking.post_id} with account: ${currentAccountInfo.username}`);
         
-        // Gọi API với timeout dài hơn và xoay vòng tài khoản
-        const response = await axios.get(url, { 
-          headers: {
-            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/123.0.0.0 Safari/537.36',
-            'Accept': 'application/json',
-            'Accept-Language': 'en-US,en;q=0.9',
-            'Connection': 'keep-alive',
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-          },
-          timeout: 30000 // 30 giây
-        });
-        
-        if (!Array.isArray(response.data) || response.data.length < 2) {
-          console.log('Invalid response format from Reddit API');
-          return true;
-        }
-        
-        // Phần tử đầu tiên là thông tin bài viết
-        const postData = response.data[0].data.children[0].data;
-        title = postData.title;
-        
-        // Phần tử thứ hai là các comments
-        const commentsData = response.data[1].data.children;
-        
-        // Hàm đệ quy để xử lý comments
-        const processComment = (comment: any, depth: number = 0): void => {
-          // Bỏ qua các "more" comments
-          if (comment.kind === 't1') {
-            const data: RedditCommentData = comment.data;
+        try {
+          // PHƯƠNG PHÁP 1: Sử dụng Snoowrap client (đã được xác thực)
+          console.log(`Attempting to fetch comments via Snoowrap API for post ${postTracking.post_id}`);
+          
+          // Sử dụng client (Snoowrap) đã được xác thực từ executeRedditRequest
+          const submission = client.getSubmission(postTracking.post_id);
+          // Lấy thông tin bài viết
+          const postData = await submission.fetch();
+          title = postData.title;
+          
+          // Lấy comments
+          const commentsListing = await submission.comments;
+          const comments = await commentsListing.fetchAll({ amount: 100 });
+          
+          console.log(`Fetched ${comments.length} comments via Snoowrap for post ${postTracking.post_id}`);
+          
+          // Xử lý comments từ Snoowrap API
+          const processComment = (comment: any, depth: number = 0): void => {
+            // Skip if undefined or not an object
+            if (!comment || typeof comment !== 'object') return;
+            // Skip if no id or body (likely deleted)
+            if (!comment.id || !comment.body) return;
             
             // Tạo đối tượng RedditComment
             const formattedComment: RedditComment = {
-              id: data.id,
-              author: data.author || '[deleted]',
-              body: data.body || '',
-              permalink: `https://www.reddit.com${data.permalink}`,
-              created_utc: data.created_utc || 0,
-              score: data.score || 0,
-              subreddit: data.subreddit,
-              is_submitter: !!data.is_submitter,
-              parent_id: data.parent_id || '',
+              id: comment.id,
+              author: comment.author?.name || '[deleted]',
+              body: comment.body || '',
+              permalink: `https://www.reddit.com${comment.permalink}`,
+              created_utc: comment.created_utc || 0,
+              score: comment.score || 0,
+              subreddit: comment.subreddit?.display_name || '',
+              is_submitter: !!comment.is_submitter,
+              parent_id: comment.parent_id || '',
               depth,
               replies: []
             };
@@ -284,33 +273,104 @@ export class CommentTracker {
             allComments.push(formattedComment);
             
             // Xác định xem đây có phải là comment mới hay không
-            // Nếu không có last_comment_id, coi như tất cả là mới
-            if (!lastCommentId || data.id > lastCommentId) {
+            if (!lastCommentId || comment.id > lastCommentId) {
               newComments.push(formattedComment);
               
               // Cập nhật comment ID mới nhất
-              if (!newestCommentId || data.id > newestCommentId) {
-                newestCommentId = data.id;
+              if (!newestCommentId || comment.id > newestCommentId) {
+                newestCommentId = comment.id;
               }
             }
             
             // Xử lý các replies nếu có
-            if (data.replies && data.replies.data && data.replies.data.children) {
-              for (const reply of data.replies.data.children) {
+            if (comment.replies && Array.isArray(comment.replies)) {
+              for (const reply of comment.replies) {
                 processComment(reply, depth + 1);
               }
             }
+          };
+          
+          // Process all comments
+          for (const comment of comments) {
+            processComment(comment);
           }
-        };
-        
-        // Xử lý tất cả comments ở level cao nhất
-        for (const comment of commentsData) {
-          processComment(comment);
+        } catch (error: any) {
+          // PHƯƠNG PHÁP 2: Fallback sang phương pháp sử dụng API public
+          console.warn(`Error fetching via Snoowrap: ${error.message || 'Unknown error'}, falling back to public API`);
+          
+          // URL API để lấy comments thông qua public API
+          const url = `https://www.reddit.com/comments/${postTracking.post_id}.json?raw_json=1&limit=100`;
+          console.log(`Falling back to public API: ${url}`);
+          
+          // Sử dụng axios trực tiếp - executeRedditRequest sẽ quản lý xác thực và proxy
+          const response = await axios.get(url, { 
+            timeout: 30000 // 30 giây
+          });
+          
+          if (!Array.isArray(response.data) || response.data.length < 2) {
+            console.log('Invalid response format from Reddit API');
+            return true;
+          }
+          
+          // Phần tử đầu tiên là thông tin bài viết
+          const postData = response.data[0].data.children[0].data;
+          title = postData.title;
+          
+          // Phần tử thứ hai là các comments
+          const commentsData = response.data[1].data.children;
+          
+          // Hàm đệ quy để xử lý comments từ public API
+          const processApiComment = (comment: any, depth: number = 0): void => {
+            // Bỏ qua các "more" comments
+            if (comment.kind === 't1') {
+              const data: RedditCommentData = comment.data;
+              
+              // Tạo đối tượng RedditComment
+              const formattedComment: RedditComment = {
+                id: data.id,
+                author: data.author || '[deleted]',
+                body: data.body || '',
+                permalink: `https://www.reddit.com${data.permalink}`,
+                created_utc: data.created_utc || 0,
+                score: data.score || 0,
+                subreddit: data.subreddit,
+                is_submitter: !!data.is_submitter,
+                parent_id: data.parent_id || '',
+                depth,
+                replies: []
+              };
+              
+              // Thêm vào danh sách tất cả comments
+              allComments.push(formattedComment);
+              
+              // Xác định xem đây có phải là comment mới hay không
+              // Nếu không có last_comment_id, coi như tất cả là mới
+              if (!lastCommentId || data.id > lastCommentId) {
+                newComments.push(formattedComment);
+                
+                // Cập nhật comment ID mới nhất
+                if (!newestCommentId || data.id > newestCommentId) {
+                  newestCommentId = data.id;
+                }
+              }
+              
+              // Xử lý các replies nếu có
+              if (data.replies && data.replies.data && data.replies.data.children) {
+                for (const reply of data.replies.data.children) {
+                  processApiComment(reply, depth + 1);
+                }
+              }
+            }
+          };
+          
+          // Xử lý tất cả comments ở level cao nhất
+          for (const comment of commentsData) {
+            processApiComment(comment);
+          }
         }
-        
-        console.log(`Found ${allComments.length} total comments, ${newComments.length} new comments`);
-        return true;
       });
+      
+      console.log(`Found ${allComments.length} total comments, ${newComments.length} new comments`);
       
       // Xử lý sau khi đã lấy dữ liệu thành công
       if (newComments.length > 0) {
