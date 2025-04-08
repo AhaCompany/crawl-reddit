@@ -18,6 +18,15 @@ const args = process.argv.slice(2);
 const proxyFilePath = args[0] || 'proxies.json';
 const verbose = args.includes('--verbose') || args.includes('-v');
 
+// Choose a realistic User-Agent from a list of common ones
+const USER_AGENTS = [
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:73.0) Gecko/20100101 Firefox/73.0",
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.159 Safari/537.36",
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/14.1.2 Safari/605.1.15",
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.131 Safari/537.36",
+  "Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:91.0) Gecko/20100101 Firefox/91.0"
+];
+
 // Load proxy file
 if (!fs.existsSync(proxyFilePath)) {
   console.error(`File not found: ${proxyFilePath}`);
@@ -64,6 +73,10 @@ async function testProxy(proxy, index) {
   };
 
   try {
+    // Select a random user agent
+    const userAgent = USER_AGENTS[Math.floor(Math.random() * USER_AGENTS.length)];
+    console.log(`Using User-Agent: ${userAgent}`);
+    
     // Make a test request
     const startTime = Date.now();
     
@@ -75,10 +88,14 @@ async function testProxy(proxy, index) {
       // Don't set httpsAgent - this would try to establish SSL with proxy itself
       timeout: TIMEOUT,
       headers: {
-        // Simulate common browser
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
-        'Accept': 'application/json, text/plain, */*',
-        'Accept-Language': 'en-US,en;q=0.9'
+        // Use realistic browser headers
+        'User-Agent': userAgent,
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8',
+        'Accept-Language': 'en-US,en;q=0.5',
+        'Accept-Encoding': 'gzip, deflate, br',
+        'Connection': 'keep-alive',
+        'Cache-Control': 'max-age=0',
+        'DNT': '1'  // Do Not Track
       },
       validateStatus: () => true  // Accept any status code
     };
@@ -214,8 +231,9 @@ function printSummary() {
       const proxyData = proxies.find(p => `${p.host}:${p.port}` === fastestProxy.proxy);
       if (proxyData) {
         const { host, port, username, password } = proxyData;
+        const userAgent = USER_AGENTS[0]; // Use first user agent for consistency
         const authParam = username && password ? `-U "${username}:${password}" ` : '';
-        const curlCmd = `curl -L ${authParam}-x "${host}:${port}" "${TEST_URL}"`;
+        const curlCmd = `curl -L ${authParam}-x "${host}:${port}" -A "${userAgent}" "${TEST_URL}"`;
         console.log('\nTest fastest proxy with curl:');
         console.log(curlCmd);
       }
