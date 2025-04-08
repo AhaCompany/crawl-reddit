@@ -1,0 +1,34 @@
+[
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "http",
+    "username": "user1",
+    "password": "pass1",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "http",
+    "username": "user2",
+    "password": "pass2",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "http",
+    "username": "user3",
+    "password": "pass3",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.127",
+    "port": 2334,
+    "protocol": "http",
+    "username": "user1",
+    "password": "pass1",
+    "country": "CA"
+  }
+]

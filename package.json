@@ -19,12 +19,15 @@
     "auto-track": "npm run build && node dist/autoTrackPosts.js",
     "import-all-posts": "npm run build && node dist/importAllPosts.js",
     "import-subreddits": "npm run build && node dist/scripts/bulk-import-subreddits.js",
+    "import-proxies": "npm run build && node dist/scripts/import-proxies.js",
     "proxy": "npm run build && node dist/proxyTool.js",
     "accounts": "npm run build && node dist/accountsManager.js",
     "migrate": "npm run build && node dist/migrationTool.js",
+    "migrate-proxy-constraints": "npm run build && node dist/scripts/update-proxy-constraints.js",
     "test-account": "npm run build && node dist/testAccountCrawl.js",
     "test-db": "npm run build && node dist/testPostgresConnection.js",
-    "debug-crawl": "npm run build && DEBUG=* node dist/dynamicCrawl.js"
+    "debug-crawl": "npm run build && DEBUG=* node dist/dynamicCrawl.js",
+    "test-proxy": "npm run build && node test-tunnel-proxy.js"
   },
   "keywords": [
     "reddit",

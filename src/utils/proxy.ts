@@ -7,6 +7,7 @@ import http from 'http';
 import https from 'https';
 import { HttpsProxyAgent } from 'https-proxy-agent';
 import { HttpProxyAgent } from 'http-proxy-agent';
+import tunnel from 'tunnel';
 import fs from 'fs';
 import path from 'path';
 import { Pool } from 'pg';
@@ -188,19 +189,35 @@ export class ProxyManager {
     country?: string
   ): Promise<boolean> {
     try {
-      const result = await this.pool.query(`
-        INSERT INTO ${this.proxyTableName}
-        (host, port, protocol, username, password, country)
-        VALUES ($1, $2, $3, $4, $5, $6)
-        ON CONFLICT (host, port) 
-        DO UPDATE SET
-          protocol = $3,
-          username = $4,
-          password = $5,
-          country = $6,
-          is_disabled = FALSE
-        RETURNING id
-      `, [host, port, protocol, username, password, country]);
+      // Kiểm tra xem proxy có tồn tại với cùng host, port, username và password không
+      const checkResult = await this.pool.query(`
+        SELECT id FROM ${this.proxyTableName}
+        WHERE host = $1 AND port = $2 AND 
+              ((username IS NULL AND $3 IS NULL) OR username = $3) AND
+              ((password IS NULL AND $4 IS NULL) OR password = $4)
+      `, [host, port, username, password]);
+
+      if (checkResult.rows.length > 0) {
+        // Nếu proxy đã tồn tại, cập nhật thông tin
+        const id = checkResult.rows[0].id;
+        await this.pool.query(`
+          UPDATE ${this.proxyTableName}
+          SET protocol = $3, country = $4, is_disabled = FALSE
+          WHERE id = $1
+        `, [id, protocol, country]);
+        
+        console.log(`Updated existing proxy ${host}:${port} (ID: ${id})`);
+      } else {
+        // Nếu không tồn tại, thêm mới
+        const result = await this.pool.query(`
+          INSERT INTO ${this.proxyTableName}
+          (host, port, protocol, username, password, country)
+          VALUES ($1, $2, $3, $4, $5, $6)
+          RETURNING id
+        `, [host, port, protocol, username, password, country]);
+        
+        console.log(`Added new proxy ${host}:${port} (ID: ${result.rows[0].id})`);
+      }
       
       // Tải lại proxy từ database
       await this.loadProxiesFromDatabase();
@@ -389,7 +406,7 @@ export function getProxyManager(): ProxyManager {
  */
 export async function setupHttpAgentsWithProxy(): Promise<{
   httpAgent: http.Agent | HttpProxyAgent;
-  httpsAgent: https.Agent | HttpsProxyAgent;
+  httpsAgent: any; // Use any type for tunneling agent
 } | null> {
   try {
     // Lấy proxy tiếp theo
@@ -402,32 +419,42 @@ export async function setupHttpAgentsWithProxy(): Promise<{
       return null;
     }
     
-    // Tạo proxy URL
-    let proxyUrl = `${proxy.protocol}://`;
-    if (proxy.username && proxy.password) {
-      proxyUrl += `${proxy.username}:${proxy.password}@`;
-    }
-    proxyUrl += `${proxy.host}:${proxy.port}`;
-    
     console.log(`Using proxy: ${proxy.host}:${proxy.port} (${proxy.protocol})`);
     
-    // Tạo HTTP proxy agent
-    const httpAgent = new HttpProxyAgent(proxyUrl);
+    // Cấu hình proxy
+    const proxyConfig = {
+      host: proxy.host,
+      port: proxy.port
+    };
     
-    // Tạo HTTPS proxy agent
-    const httpsAgent = new HttpsProxyAgent(proxyUrl);
+    // Thêm xác thực nếu có
+    if (proxy.username && proxy.password) {
+      Object.assign(proxyConfig, {
+        proxyAuth: `${proxy.username}:${proxy.password}`
+      });
+    }
+    
+    // Tạo HTTP proxy agent
+    const httpAgent = new HttpProxyAgent(`${proxy.protocol}://${proxy.host}:${proxy.port}`);
+    
+    // Tạo HTTPS over HTTP tunnel agent - giải quyết vấn đề SSL/TLS
+    const tunnelAgent = tunnel.httpsOverHttp({
+      proxy: proxyConfig
+    });
     
     // Đặt làm global agents
     http.globalAgent = httpAgent;
-    https.globalAgent = httpsAgent;
+    // Không gán tunnelAgent trực tiếp vào globalAgent vì khác kiểu
+    // https.globalAgent sẽ được giữ nguyên
     
     // Đảm bảo các kết nối an toàn kiểm tra chứng chỉ
     process.env.NODE_TLS_REJECT_UNAUTHORIZED = '1';
     
-    console.log('HTTP and HTTPS agents configured with proxy');
+    console.log('HTTP and HTTPS agents configured with tunnel proxy');
     
     // Trả về cặp agent để sử dụng trong Snoowrap
-    return { httpAgent, httpsAgent };
+    // tunnelAgent được gán vào httpsAgent để trả về cho người gọi sử dụng
+    return { httpAgent, httpsAgent: tunnelAgent as any };
   } catch (error) {
     console.error('Error setting up proxy HTTP agents:', error);
     // Fallback to default agents
