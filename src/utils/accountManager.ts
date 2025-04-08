@@ -311,8 +311,8 @@ export class RedditAccountManager {
     const now = new Date();
     const availableAccounts = this.accounts.filter(account => 
       !account.isDisabled && 
-      (!account.cooldownUntil || account.cooldownUntil < now) &&
-      account.dailyUsageCount < this.MAX_DAILY_USAGE
+      (!account.cooldownUntil || account.cooldownUntil < now)
+      // Đã bỏ check daily_usage_count < this.MAX_DAILY_USAGE để tạm thời giải quyết vấn đề
     );
     
     if (availableAccounts.length === 0) {
