@@ -189,42 +189,49 @@ export class ProxyManager {
     country?: string
   ): Promise<boolean> {
     try {
-      // Kiểm tra xem proxy có tồn tại với cùng host, port, username và password không
-      const checkResult = await this.pool.query(`
-        SELECT id FROM ${this.proxyTableName}
-        WHERE host = $1 AND port = $2 AND 
-              ((username IS NULL AND $3 IS NULL) OR username = $3) AND
-              ((password IS NULL AND $4 IS NULL) OR password = $4)
-      `, [host, port, username, password]);
-
-      if (checkResult.rows.length > 0) {
-        // Nếu proxy đã tồn tại, cập nhật thông tin
-        const id = checkResult.rows[0].id;
-        await this.pool.query(`
-          UPDATE ${this.proxyTableName}
-          SET protocol = $2, country = $3, is_disabled = FALSE
-          WHERE id = $1
-        `, [id, protocol, country]);
-        
-        console.log(`Updated existing proxy ${host}:${port} (ID: ${id})`);
-      } else {
-        // Nếu không tồn tại, thêm mới
-        const result = await this.pool.query(`
-          INSERT INTO ${this.proxyTableName}
-          (host, port, protocol, username, password, country)
-          VALUES ($1, $2, $3, $4, $5, $6)
-          RETURNING id
-        `, [host, port, protocol, username, password, country]);
-        
-        console.log(`Added new proxy ${host}:${port} (ID: ${result.rows[0].id})`);
-      }
+      console.log(`Đang thêm proxy: ${host}:${port}, protocol=${protocol}, username=${username}, country=${country}`);
+      
+      // Thêm mới proxy trực tiếp mà không kiểm tra trùng lặp
+      // Do chúng ta đã xóa ràng buộc unique, việc này sẽ hoạt động tốt
+      const result = await this.pool.query(`
+        INSERT INTO ${this.proxyTableName}
+        (host, port, protocol, username, password, country)
+        VALUES ($1, $2, $3, $4, $5, $6)
+        RETURNING id
+      `, [host, port, protocol, username, password, country]);
+      
+      console.log(`Đã thêm proxy mới ${host}:${port} (ID: ${result.rows[0].id})`);
       
       // Tải lại proxy từ database
       await this.loadProxiesFromDatabase();
       
       return true;
     } catch (error) {
-      console.error(`Error adding proxy ${host}:${port}:`, error);
+      console.error(`Lỗi khi thêm proxy ${host}:${port}:`, error);
+      
+      // Nếu vẫn gặp lỗi unique constraint, thử cập nhật thay vì chèn mới
+      try {
+        console.log(`Thử cập nhật proxy hiện có thay vì chèn mới...`);
+        
+        const updateResult = await this.pool.query(`
+          UPDATE ${this.proxyTableName}
+          SET protocol = $3, username = $4, password = $5, country = $6, is_disabled = FALSE
+          WHERE host = $1 AND port = $2
+          RETURNING id
+        `, [host, port, protocol, username, password, country]);
+        
+        if (updateResult.rowCount && updateResult.rowCount > 0) {
+          console.log(`Đã cập nhật proxy ${host}:${port} (ID: ${updateResult.rows[0].id})`);
+          
+          // Tải lại proxy từ database
+          await this.loadProxiesFromDatabase();
+          
+          return true;
+        }
+      } catch (updateError) {
+        console.error(`Cũng không thể cập nhật proxy ${host}:${port}:`, updateError);
+      }
+      
       return false;
     }
   }
