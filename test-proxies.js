@@ -55,13 +55,12 @@ async function testProxy(proxy, index) {
   const isHttps = targetUrl.protocol === 'https:';
   
   const auth = username && password ? `${username}:${password}@` : '';
-  const proxyUrl = `http://${auth}${host}:${port}`;
+  const proxyUrl = `https://${auth}${host}:${port}`;
 
-  console.log(`[${index+1}/${proxies.length}] Testing ${host}:${port} (http)...`);
+  console.log(`[${index+1}/${proxies.length}] Testing ${host}:${port} (https)...`);
   
-  // Always use HttpProxyAgent for both HTTP and HTTPS targets
-  // For HTTPS targets, this creates a CONNECT tunnel
-  const agent = new HttpProxyAgent(proxyUrl);
+  // Use HttpsProxyAgent for HTTPS proxy
+  const agent = new HttpsProxyAgent(proxyUrl);
 
   const result = {
     proxy: `${host}:${port}`,
@@ -82,10 +81,9 @@ async function testProxy(proxy, index) {
     
     // Setup request config like curl would
     const config = {
-      // Use the HTTP agent for connection to proxy
-      // It will establish CONNECT tunnel for HTTPS targets
-      httpAgent: agent,
-      // Don't set httpsAgent - this would try to establish SSL with proxy itself
+      // Use the HTTPS agent for connection to proxy
+      httpsAgent: agent,
+      // Don't use httpAgent since we're using HTTPS proxy directly
       timeout: TIMEOUT,
       headers: {
         // Use realistic browser headers
@@ -233,7 +231,7 @@ function printSummary() {
         const { host, port, username, password } = proxyData;
         const userAgent = USER_AGENTS[0]; // Use first user agent for consistency
         const authParam = username && password ? `-U "${username}:${password}" ` : '';
-        const curlCmd = `curl -L ${authParam}-x "${host}:${port}" -A "${userAgent}" "${TEST_URL}"`;
+        const curlCmd = `curl -L ${authParam}--proxy-insecure -x "https://${host}:${port}" -A "${userAgent}" "${TEST_URL}"`;
         console.log('\nTest fastest proxy with curl:');
         console.log(curlCmd);
       }
