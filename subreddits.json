@@ -50,14 +50,14 @@
   },
   {
     "subreddit": "bitcoin",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
   },
   {
     "subreddit": "bittensor",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
@@ -106,7 +106,7 @@
   },
   {
     "subreddit": "conservative",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
@@ -120,14 +120,14 @@
   },
   {
     "subreddit": "crypto",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
   },
   {
     "subreddit": "cryptocurrency",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
@@ -169,7 +169,7 @@
   },
   {
     "subreddit": "defi",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
@@ -190,7 +190,7 @@
   },
   {
     "subreddit": "dtao",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
@@ -218,7 +218,7 @@
   },
   {
     "subreddit": "ethereum",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
@@ -239,7 +239,7 @@
   },
   {
     "subreddit": "gemini25",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
@@ -260,7 +260,7 @@
   },
   {
     "subreddit": "harris",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
@@ -302,21 +302,21 @@
   },
   {
     "subreddit": "liberal",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
   },
   {
     "subreddit": "llm",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
   },
   {
     "subreddit": "machinelearning",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
@@ -351,7 +351,7 @@
   },
   {
     "subreddit": "news",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
@@ -372,7 +372,7 @@
   },
   {
     "subreddit": "politics",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
@@ -407,28 +407,28 @@
   },
   {
     "subreddit": "subnet",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
   },
   {
     "subreddit": "subnet_72",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
   },
   {
     "subreddit": "subnets",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
   },
   {
     "subreddit": "tao",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
@@ -456,7 +456,7 @@
   },
   {
     "subreddit": "trump",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
@@ -470,7 +470,7 @@
   },
   {
     "subreddit": "uselection",
-    "interval": "15m",
+    "interval": "30m",
     "limit": 100,
     "sortBy": "new",
     "timeRange": "day"
