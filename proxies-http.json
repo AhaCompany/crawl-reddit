@@ -2,7 +2,7 @@
   {
     "host": "43.159.28.126",
     "port": 2334,
-    "protocol": "http",
+    "protocol": "https",
     "username": "u132f6e3756ae05c4-zone-custom-region-us-session-cBum3AnH0-sessTime-120",
     "password": "u132f6e3756ae05c4",
     "country": "US"
@@ -10,7 +10,7 @@
   {
     "host": "43.159.28.126",
     "port": 2334,
-    "protocol": "http",
+    "protocol": "https",
     "username": "u132f6e3756ae05c4-zone-custom-region-us-session-kbyqHyoY5-sessTime-120",
     "password": "u132f6e3756ae05c4",
     "country": "US"
@@ -18,7 +18,7 @@
   {
     "host": "43.159.28.126",
     "port": 2334,
-    "protocol": "http",
+    "protocol": "https",
     "username": "u132f6e3756ae05c4-zone-custom-region-us-session-iwnBEbDpF-sessTime-120",
     "password": "u132f6e3756ae05c4",
     "country": "US"
@@ -26,7 +26,7 @@
   {
     "host": "43.159.28.126",
     "port": 2334,
-    "protocol": "http",
+    "protocol": "https",
     "username": "u132f6e3756ae05c4-zone-custom-region-us-session-9tYb8r6eb-sessTime-120",
     "password": "u132f6e3756ae05c4",
     "country": "US"
@@ -34,7 +34,7 @@
   {
     "host": "43.159.28.126",
     "port": 2334,
-    "protocol": "http",
+    "protocol": "https",
     "username": "u132f6e3756ae05c4-zone-custom-region-us-session-xkcvhM4uD-sessTime-120",
     "password": "u132f6e3756ae05c4",
     "country": "US"
@@ -42,7 +42,7 @@
   {
     "host": "43.159.28.126",
     "port": 2334,
-    "protocol": "http",
+    "protocol": "https",
     "username": "u132f6e3756ae05c4-zone-custom-region-us-session-W0W5jyXPw-sessTime-120",
     "password": "u132f6e3756ae05c4",
     "country": "US"
@@ -50,7 +50,7 @@
   {
     "host": "43.159.28.126",
     "port": 2334,
-    "protocol": "http",
+    "protocol": "https",
     "username": "u132f6e3756ae05c4-zone-custom-region-us-session-dU6PXNeGv-sessTime-120",
     "password": "u132f6e3756ae05c4",
     "country": "US"
@@ -58,7 +58,7 @@
   {
     "host": "43.159.28.126",
     "port": 2334,
-    "protocol": "http",
+    "protocol": "https",
     "username": "u132f6e3756ae05c4-zone-custom-region-us-session-9wLhKKnbc-sessTime-120",
     "password": "u132f6e3756ae05c4",
     "country": "US"
@@ -66,7 +66,7 @@
   {
     "host": "43.159.28.126",
     "port": 2334,
-    "protocol": "http",
+    "protocol": "https",
     "username": "u132f6e3756ae05c4-zone-custom-region-us-session-DpLnfZlWS-sessTime-120",
     "password": "u132f6e3756ae05c4",
     "country": "US"
@@ -74,8 +74,328 @@
   {
     "host": "43.159.28.126",
     "port": 2334,
-    "protocol": "http",
+    "protocol": "https",
     "username": "u132f6e3756ae05c4-zone-custom-region-us-session-jM2GWWfqm-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-6ykUqNlt0-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-r3iyKCtKq-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-qqCj7scWH-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-EEe8lxeAe-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-ap8s2dkoH-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-HLwqHerm0-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-vTeHRm10K-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-iH3ZWI8BW-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-LgnJZGyDA-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-WWsI78oYt-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-0JROCr6Jm-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-K8eJ33X6Z-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-4FGO2Wujq-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-B671CGWKH-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-UdxusmYRe-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-okXH46U83-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-7VPEArgFV-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-5ghBOkAH8-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-FqiHZm1gf-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-xtTkhEDFW-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-lnHhRUVyV-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-5ViAmkKNZ-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-25758Shdz-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-ainRpde2G-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-4uyN7SBO3-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-8bjxVvIJU-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-raQmaLVkv-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-3wrnCXJeb-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-A7GBIgqv3-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-1GRloP1if-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-zV5fiZikk-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-e4ZIz7n6L-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-WoSiiVmK6-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-YCgAvs3UF-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-Rf990z09h-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-UmNTpaPrs-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-kvMcuQj7E-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-YHPvLcgSS-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-aE3smDdqa-sessTime-120",
+    "password": "u132f6e3756ae05c4",
+    "country": "US"
+  },
+  {
+    "host": "43.159.28.126",
+    "port": 2334,
+    "protocol": "https",
+    "username": "u132f6e3756ae05c4-zone-custom-region-us-session-O1OYdGZVj-sessTime-120",
     "password": "u132f6e3756ae05c4",
     "country": "US"
   }
