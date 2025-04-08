@@ -202,7 +202,7 @@ export class ProxyManager {
         const id = checkResult.rows[0].id;
         await this.pool.query(`
           UPDATE ${this.proxyTableName}
-          SET protocol = $3, country = $4, is_disabled = FALSE
+          SET protocol = $2, country = $3, is_disabled = FALSE
           WHERE id = $1
         `, [id, protocol, country]);
         
