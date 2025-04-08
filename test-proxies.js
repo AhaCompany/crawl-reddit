@@ -1,13 +1,13 @@
 /**
- * Script test all proxies from a JSON file
- * Usage: node test-proxies.js <proxies.json>
+ * Script test all proxies from a JSON file - Improved curl-like version
+ * Usage: node test-proxies.js <proxies.json> [--verbose|-v]
  */
 
 const fs = require('fs');
-const path = require('path');
 const axios = require('axios');
 const HttpsProxyAgent = require('https-proxy-agent');
 const HttpProxyAgent = require('http-proxy-agent');
+const { URL } = require('url');
 
 // URL to test with
 const TEST_URL = 'https://www.reddit.com/r/programming.json';
@@ -37,23 +37,25 @@ let failed = 0;
 let pending = proxies.length;
 const results = [];
 
-// Test a single proxy
+// Test a single proxy - CURL-like approach
 async function testProxy(proxy, index) {
-  const { host, port, protocol, username, password } = proxy;
-  const proxyProtocol = protocol || 'http';
-  const auth = username && password ? `${username}:${password}@` : '';
-  const proxyUrl = `${proxyProtocol}://${auth}${host}:${port}`;
-
-  console.log(`[${index+1}/${proxies.length}] Testing ${host}:${port} (${proxyProtocol})...`);
+  const { host, port, username, password } = proxy;
+  // Always use HTTP protocol for the proxy connection, even for HTTPS targets
+  // This is how curl works with -x/--proxy flag
+  const targetUrl = new URL(TEST_URL);
+  const isHttps = targetUrl.protocol === 'https:';
   
-  // Create proxy agent
-  const agent = proxyProtocol === 'https' 
-    ? new HttpsProxyAgent(proxyUrl)
-    : new HttpProxyAgent(proxyUrl);
+  const auth = username && password ? `${username}:${password}@` : '';
+  const proxyUrl = `http://${auth}${host}:${port}`;
+
+  console.log(`[${index+1}/${proxies.length}] Testing ${host}:${port} (http)...`);
+  
+  // Always use HttpProxyAgent for both HTTP and HTTPS targets
+  // For HTTPS targets, this creates a CONNECT tunnel
+  const agent = new HttpProxyAgent(proxyUrl);
 
   const result = {
     proxy: `${host}:${port}`,
-    protocol: proxyProtocol,
     auth: username ? 'Yes' : 'No',
     status: 'Unknown',
     time: 0,
@@ -64,15 +66,24 @@ async function testProxy(proxy, index) {
   try {
     // Make a test request
     const startTime = Date.now();
-    const response = await axios.get(TEST_URL, {
-      httpAgent: proxyProtocol === 'http' ? agent : undefined,
-      httpsAgent: proxyProtocol === 'https' ? agent : undefined,
+    
+    // Setup request config like curl would
+    const config = {
+      // Use the HTTP agent for connection to proxy
+      // It will establish CONNECT tunnel for HTTPS targets
+      httpAgent: agent,
+      // Don't set httpsAgent - this would try to establish SSL with proxy itself
       timeout: TIMEOUT,
       headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+        // Simulate common browser
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36',
+        'Accept': 'application/json, text/plain, */*',
+        'Accept-Language': 'en-US,en;q=0.9'
       },
       validateStatus: () => true  // Accept any status code
-    });
+    };
+
+    const response = await axios.get(TEST_URL, config);
     
     const duration = Date.now() - startTime;
     result.time = duration;
@@ -169,19 +180,47 @@ function printSummary() {
     console.log('\nWorking Proxies:');
     results.filter(r => r.status === 'Working')
       .sort((a, b) => a.time - b.time)
-      .forEach((r, i) => console.log(`  ${i+1}. ${r.proxy} (${r.protocol}) - ${r.time}ms`));
+      .forEach((r, i) => console.log(`  ${i+1}. ${r.proxy} - ${r.time}ms`));
+
+    // Save working proxies to a file
+    const workingProxies = results.filter(r => r.status === 'Working').map(r => {
+      const proxy = proxies.find(p => `${p.host}:${p.port}` === r.proxy);
+      return proxy;
+    });
+    if (workingProxies.length > 0) {
+      const workingFile = 'working-proxies.json';
+      fs.writeFileSync(workingFile, JSON.stringify(workingProxies, null, 2));
+      console.log(`\nWorking proxies saved to ${workingFile}`);
+    }
   }
   
   if (failed > 0) {
     console.log('\nFailed Proxies:');
     results.filter(r => r.status === 'Failed')
-      .forEach((r, i) => console.log(`  ${i+1}. ${r.proxy} (${r.protocol}) - ${r.error}`));
+      .forEach((r, i) => console.log(`  ${i+1}. ${r.proxy} - ${r.error}`));
   }
   
   // Save results to file
   const resultsFile = `proxy-test-results-${new Date().toISOString().replace(/:/g, '-').split('.')[0]}.json`;
   fs.writeFileSync(resultsFile, JSON.stringify(results, null, 2));
   console.log(`\nDetailed results saved to ${resultsFile}`);
+  
+  // Generate curl test command for working proxies
+  if (working > 0) {
+    const fastestProxy = results.filter(r => r.status === 'Working')
+      .sort((a, b) => a.time - b.time)[0];
+    
+    if (fastestProxy) {
+      const proxyData = proxies.find(p => `${p.host}:${p.port}` === fastestProxy.proxy);
+      if (proxyData) {
+        const { host, port, username, password } = proxyData;
+        const authParam = username && password ? `-U "${username}:${password}" ` : '';
+        const curlCmd = `curl -L ${authParam}-x "${host}:${port}" "${TEST_URL}"`;
+        console.log('\nTest fastest proxy with curl:');
+        console.log(curlCmd);
+      }
+    }
+  }
   
   console.log('='.repeat(80));
 }

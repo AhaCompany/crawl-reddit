@@ -1,0 +1,748 @@
+[
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "http",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "timeout of 30000ms exceeded",
+    "details": {
+      "message": "timeout of 30000ms exceeded",
+      "code": "ECONNABORTED",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "http",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "timeout of 30000ms exceeded",
+    "details": {
+      "message": "timeout of 30000ms exceeded",
+      "code": "ECONNABORTED",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  },
+  {
+    "proxy": "43.159.28.126:2334",
+    "protocol": "https",
+    "auth": "Yes",
+    "status": "Failed",
+    "time": 0,
+    "error": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+    "details": {
+      "message": "write EPROTO C0FA75EC01000000:error:0A0000C6:SSL routines:tls_get_more_records:packet length too long:ssl/record/methods/tls_common.c:663:\n",
+      "code": "EPROTO",
+      "errno": -100,
+      "syscall": "write",
+      "request": "No response received"
+    }
+  }
+]
