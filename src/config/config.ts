@@ -22,6 +22,8 @@ export const config = {
     // 'both' - lưu vào cả JSON và SQLite
     // 'both_miner' - lưu vào cả JSON và PostgreSQL với MinerStorage schema
     storage: (process.env.STORAGE_TYPE || 'json') as 'json' | 'postgresql' | 'sqlite' | 'postgresql_miner' | 'both' | 'both_miner',
+    // Cấu hình thu thập comments
+    crawlComments: process.env.CRAWL_COMMENTS === 'true',
     // Cấu hình xoay vòng proxy
     useProxies: process.env.USE_PROXIES === 'true',
   },

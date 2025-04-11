@@ -1,241 +1,212 @@
 # Reddit Data Crawler
 
-Ứng dụng Node.js/TypeScript để crawl dữ liệu từ Reddit sử dụng Reddit API.
+A comprehensive tool for crawling Reddit data, including posts and comments from multiple subreddits, with support for various API sources.
 
-## Cài đặt
+## Features
 
-1. Clone repository này
-2. Cài đặt các dependencies:
+- Crawl Reddit posts and comments from multiple sources
+- Support for direct Reddit API with account and proxy rotation
+- Support for PushShift API (when available)
+- Support for PullPush.io API as an alternative for historical data
+- Batch processing for multiple subreddits
+- State persistence for interrupted crawls
+- Configurable time ranges and pagination
+- Proper error handling and retries
+
+## API Sources
+
+This tool can use multiple data sources:
+
+1. **Direct Reddit API**
+   - Most reliable for recent data and comments
+   - Requires authentication
+   - Has rate limits (requires account rotation)
+   - Limited to ~1000 posts per subreddit
+
+2. **Pushshift API**
+   - Good for historical data when working
+   - No authentication required
+   - Has been unreliable recently (403, 404 errors)
+   - Multiple endpoints available
+
+3. **PullPush.io API**
+   - Alternative for historical data
+   - No authentication required
+   - 100 posts per request limit
+   - Both posts and comments available
+
+## Installation
 
 ```bash
+# Clone the repository
+git clone https://github.com/yourusername/crawl-reddit.git
+cd crawl-reddit
+
+# Install dependencies
 npm install
+
+# Build the project
+npm run build
 ```
 
-3. Sao chép file `.env.example` thành `.env` và điền thông tin tài khoản Reddit API:
+## Configuration
+
+1. **Reddit Accounts** (required for Direct Reddit API)
+   - Create a `reddit_accounts.json` file based on `reddit_accounts_sample.json`
+   - Add your Reddit API credentials
+
+2. **Proxies** (optional but recommended)
+   - Create a `proxies.json` file based on `proxies.json.example`
+   - Add your proxy server configurations
+
+## Usage
+
+### Direct Reddit API Crawling
+
+For recent data with comments:
 
 ```bash
-cp .env.example .env
+# Crawl a single subreddit
+npm run direct-crawl
+
+# Crawl multiple subreddits in batches
+npm run direct-batch
 ```
 
-4. Chỉnh sửa file `.env` với thông tin xác thực Reddit của bạn
+Environment variables:
+- `SUBREDDIT`: Target subreddit name
+- `CRAWL_COMMENTS`: Set to "true" to fetch comments for each post
 
-## Sử dụng
+### PushShift Crawling (when available)
 
-### Bước 1: Tạo Reddit App
+For historical data:
 
-1. Đăng nhập vào Reddit
-2. Truy cập: https://www.reddit.com/prefs/apps
-3. Cuộn xuống dưới và nhấp vào "create another app..."
-4. Điền thông tin:
-   - Name: tên ứng dụng của bạn
-   - App type: chọn "script"
-   - Description: mô tả ngắn
-   - About URL: có thể để trống
-   - Redirect URI: http://localhost
-5. Nhấp "create app"
-6. Ghi lại Client ID (chuỗi ký tự dưới "personal use script") và Client Secret
-
-### Bước 2: Cập nhật file .env
-
-Mở file `.env` và điền thông tin:
-```
-REDDIT_CLIENT_ID=your_client_id_here
-REDDIT_CLIENT_SECRET=your_client_secret_here
-REDDIT_USERNAME=your_reddit_username
-REDDIT_PASSWORD=your_reddit_password
-REDDIT_USER_AGENT=nodejs:reddit-crawler:v1.0 (by /u/your_username)
+```bash
+# Crawl historical data 
+npm run historical-crawl
 ```
 
-### Bước 3: Chạy ứng dụng
+### PullPush.io Crawling
 
-#### Crawl bài viết từ subreddit (một lần)
+For historical data when Pushshift is unavailable:
+
+```bash
+# Test with a single subreddit
+npm run pullpush-test
+
+# Crawl multiple subreddits in batches
+npm run pullpush-batch
+```
+
+Environment variables:
+- `CRAWL_COMMENTS`: Set to "true" to fetch comments for each post
+
+## Basic Usage (Original)
+
+### Crawl posts from a subreddit (one-time)
 
 ```bash
 npm start -- programming 25 hot week true
 ```
 
-Các tham số:
-1. Tên subreddit (mặc định: programming)
-2. Số bài viết cần crawl (mặc định: 25)
-3. Cách sắp xếp: hot, new, top, rising (mặc định: hot)
-4. Khoảng thời gian (cho top): hour, day, week, month, year, all (mặc định: week)
-5. Verbose mode (true/false): nếu là true (mặc định), sẽ lấy thông tin chi tiết cho mỗi bài viết bao gồm nội dung đầy đủ của bài viết (selftext, selftext_html). Nếu là false, chỉ lấy thông tin cơ bản (nhanh hơn, ít API calls hơn)
+Parameters:
+1. Subreddit name (default: programming)
+2. Number of posts to crawl (default: 25)
+3. Sort method: hot, new, top, rising (default: hot)
+4. Time range (for top): hour, day, week, month, year, all (default: week)
+5. Verbose mode (true/false): If true (default), detailed post information will be retrieved
 
-Ví dụ lấy thông tin tóm tắt (nhanh hơn):
-```bash
-npm start -- programming 50 hot day false
-```
+### Continuous Crawling
 
-Ví dụ lấy thông tin chi tiết (đầy đủ nội dung bài viết):
-```bash
-npm start -- programming 25 top week true
-```
-
-#### Crawl bài viết liên tục (theo khoảng thời gian)
-
-Để crawl một subreddit liên tục theo thời gian thực, bạn có thể sử dụng chế độ continuous:
+To crawl a subreddit continuously in real-time:
 
 ```bash
 npm run continuous-crawl -- <subreddit> <interval> [limit] [sort] [timeRange]
 ```
 
-Các tham số:
-1. `<subreddit>`: Tên subreddit cần crawl (bắt buộc)
-2. `<interval>`: Khoảng thời gian giữa các lần crawl (bắt buộc)
-   - Định dạng: số + đơn vị (s: giây, m: phút, h: giờ)
-   - Ví dụ: 30s, 5m, 1h
-   - Lưu ý: Khoảng thời gian tối thiểu là 10s (10 giây)
-3. `[limit]`: Số bài viết tối đa lấy mỗi lần (mặc định: 100)
-4. `[sort]`: Cách sắp xếp (mặc định: new)
-5. `[timeRange]`: Khoảng thời gian cho 'top' (mặc định: day)
+Parameters:
+1. `<subreddit>`: Subreddit name (required)
+2. `<interval>`: Time between crawls (e.g., 30s, 5m, 1h)
+3. `[limit]`: Maximum posts per crawl (default: 100)
+4. `[sort]`: Sort method (default: new)
+5. `[timeRange]`: Time range for 'top' (default: day)
 
-Ví dụ:
-```bash
-# Crawl r/programming mỗi 5 phút, mỗi lần lấy 50 bài mới nhất
-npm run continuous-crawl -- programming 5m 50 new
-
-# Crawl r/wallstreetbets mỗi 10 phút, mỗi lần lấy 100 bài hot nhất trong ngày
-npm run continuous-crawl -- wallstreetbets 10m 100 hot day
-
-# Crawl r/news mỗi 1 giờ, mỗi lần lấy 200 bài top trong tuần
-npm run continuous-crawl -- news 1h 200 top week
-```
-
-Chương trình sẽ chạy liên tục cho đến khi bạn dừng lại (nhấn Ctrl+C). Dữ liệu sẽ được lưu trữ sau mỗi lần crawl theo cấu hình storage của bạn (JSON hoặc PostgreSQL).
-
-#### Crawl comments từ một bài viết
-
-Để lấy comments từ một bài viết, sử dụng lệnh:
+### Crawl comments from a post
 
 ```bash
 npm start -- comments <post_id> <limit>
 ```
 
-Trong đó:
-- `<post_id>`: ID của bài viết Reddit (không phải URL đầy đủ, chỉ phần ID)
-- `<limit>`: Số lượng comments tối đa cần lấy (mặc định: 100)
+## Documentation
 
-Ví dụ:
-```bash
-npm start -- comments abc123 200
-```
+Detailed documentation is available in the docs directory:
 
-**Lưu ý**: Để lấy ID bài viết, bạn có thể:
-1. Từ URL của bài viết trên Reddit (ví dụ: https://www.reddit.com/r/programming/comments/abc123/title_here), `abc123` chính là ID
-2. Hoặc từ kết quả crawl bài viết đã thực hiện trước đó, mỗi bài viết đều có trường `id`
+- [Direct Reddit API Guide](./DIRECT_REDDIT_GUIDE.md)
+- [Pushshift API Guide](./PUSHSHIFT_API_GUIDE.md)
+- [PullPush API Guide](./PULLPUSH_GUIDE.md)
 
-## Kết quả
+## Data Storage
 
-Dữ liệu đã crawl sẽ được lưu trong thư mục `data` dưới dạng file JSON.
+The application supports multiple storage options:
 
-## Lưu trữ dữ liệu
+1. **JSON files** (default)
+   - Data is stored in JSON files in the `data/` directory
 
-Ứng dụng hỗ trợ lưu trữ dữ liệu bằng nhiều cách:
+2. **PostgreSQL**
+   - Update `.env` with your PostgreSQL connection details:
+   ```
+   STORAGE_TYPE=postgresql
+   PG_HOST=localhost
+   PG_PORT=5432
+   PG_DATABASE=reddit_data
+   PG_USER=postgres
+   PG_PASSWORD=your_password
+   ```
 
-### 1. Lưu trữ dưới dạng file JSON (mặc định)
+3. **SQLite**
+   - Update `.env`:
+   ```
+   STORAGE_TYPE=sqlite
+   SQLITE_DB_PATH=data/reddit_miner.db
+   ```
 
-Đây là chế độ mặc định, dữ liệu sẽ được lưu thành các file JSON trong thư mục `data/`.
+4. **Parallel Storage**
+   - Store in multiple systems simultaneously:
+   ```
+   # Store in both JSON and SQLite
+   STORAGE_TYPE=both
+   
+   # Store in both JSON and PostgreSQL with MinerStorage schema
+   STORAGE_TYPE=both_miner
+   ```
 
-### 2. Lưu trữ vào PostgreSQL
+## Best Practices
 
-Để lưu dữ liệu vào PostgreSQL, bạn cần:
+1. **Rate Limiting**
+   - Always respect API rate limits
+   - Use account rotation for Reddit API
+   - Add delays between requests for other APIs
 
-1. Cài đặt và cấu hình PostgreSQL server
-2. Tạo database mới (mặc định là `reddit_data`)
-3. Cập nhật thông tin kết nối trong file `.env`:
+2. **Error Handling**
+   - All scripts include retry mechanisms
+   - State persistence allows resuming interrupted crawls
 
-```
-# Chọn chế độ lưu trữ
-STORAGE_TYPE=postgresql
+3. **Data Storage**
+   - Data is stored in JSON format
+   - Organized by subreddit and post ID
 
-# Thông tin kết nối PostgreSQL
-PG_HOST=localhost
-PG_PORT=5432
-PG_DATABASE=reddit_data
-PG_USER=postgres
-PG_PASSWORD=your_password
-```
+## Troubleshooting
 
-### 3. Lưu trữ vào PostgreSQL với cấu trúc MinerStorage
+If you encounter issues:
 
-Đây là chế độ lưu trữ dữ liệu vào PostgreSQL với cấu trúc mapping giống như SqliteMinerStorage:
+- **403 Forbidden from Pushshift API**
+  - Try using PullPush.io API instead
+  - Check if the IP is being rate limited
 
-1. Cài đặt và cấu hình PostgreSQL server
-2. Tạo database mới (mặc định là `reddit_data`)
-3. Cập nhật file `.env`:
+- **Reddit API Rate Limits**
+  - Add more Reddit accounts to `reddit_accounts.json`
+  - Increase delay between requests
 
-```
-# Chọn chế độ lưu trữ 
-STORAGE_TYPE=postgresql_miner
-
-# Thông tin kết nối PostgreSQL
-PG_HOST=localhost
-PG_PORT=5432
-PG_DATABASE=reddit_data
-PG_USER=postgres
-PG_PASSWORD=your_password
-```
-
-### 4. Lưu trữ vào SQLite theo cấu trúc MinerStorage
-
-Đây là chế độ lưu trữ dữ liệu vào file SQLite database với cấu trúc mapping phù hợp với MinerStorage:
-
-1. Cập nhật file `.env`:
-
-```
-# Chọn chế độ lưu trữ
-STORAGE_TYPE=sqlite
-
-# Đường dẫn tới file SQLite (tùy chọn)
-SQLITE_DB_PATH=data/reddit_miner.db
-```
-
-### 5. Lưu trữ song song
-
-Bạn có thể chọn lưu trữ cùng lúc vào nhiều hệ thống lưu trữ:
-
-```
-# Lưu vào cả JSON và SQLite
-STORAGE_TYPE=both
-
-# Lưu vào cả JSON và PostgreSQL với MinerStorage schema
-STORAGE_TYPE=both_miner
-```
-
-#### Cấu trúc MinerStorage
-
-Dữ liệu được lưu vào bảng `DataEntity` với cấu trúc:
-
-```sql
-CREATE TABLE DataEntity (
-  uri                 TEXT            PRIMARY KEY,
-  datetime            TIMESTAMP(6)    NOT NULL,
-  timeBucketId        INTEGER         NOT NULL,
-  source              INTEGER         NOT NULL,
-  label               CHAR(32)                ,
-  content             BLOB/BYTEA      NOT NULL,
-  contentSizeBytes    INTEGER         NOT NULL
-)
-```
-
-Mapping dữ liệu từ Reddit:
-
-1. `uri`: URL đầy đủ của post/comment
-2. `datetime`: Thời gian tạo post/comment (chính xác đến giây)
-3. `timeBucketId`: ID của time bucket (tính bằng số giờ từ epoch)
-4. `source`: Luôn là `1` (DataSource.REDDIT)
-5. `label`: Tên subreddit (chuẩn hóa, tối đa 32 ký tự)
-6. `content`: Dữ liệu JSON của RedditContent (với created_at đã làm mờ đến phút)
-7. `contentSizeBytes`: Kích thước của content tính bằng byte
-
-### Cấu trúc database PostgreSQL
-
-Ứng dụng sẽ tự động tạo các bảng cần thiết trong PostgreSQL:
-
-- `subreddits`: Thông tin về các subreddit
-- `posts`: Bài viết từ Reddit
-- `comments`: Comments của các bài viết
-
-## Lưu ý
-
-Để sử dụng Reddit API, bạn cần tạo một ứng dụng Reddit tại https://www.reddit.com/prefs/apps và lấy thông tin client ID và client secret.# crawl-reddit
+- **Missing Data**
+  - Try alternative API sources
+  - Adjust date ranges to be smaller
